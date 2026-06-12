@@ -1,0 +1,2 @@
+-keepclassmembers class com.example.shellymonitor.data.** { *; }
+-keep class com.google.gson.** { *; }
