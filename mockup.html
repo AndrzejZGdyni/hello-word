@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Shelly Monitor – Mockup</title>
+<style>
+  body { background: #e8eaf6; font-family: 'Segoe UI', sans-serif; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 40px; flex-wrap: wrap; }
+  h2 { text-align: center; color: #333; width: 100%; margin-bottom: 0; }
+  p.sub { text-align: center; color: #777; width: 100%; margin-top: 4px; margin-bottom: 32px; }
+
+  .phone {
+    width: 360px;
+    background: #fff;
+    border-radius: 40px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    overflow: hidden;
+    border: 6px solid #222;
+    position: relative;
+  }
+  .phone-notch {
+    background: #222;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .phone-notch::after {
+    content: '';
+    width: 80px; height: 12px;
+    background: #111;
+    border-radius: 10px;
+  }
+  .status-bar {
+    background: #f5f5f5;
+    padding: 4px 16px;
+    font-size: 11px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+  }
+  .screen { padding: 16px; }
+  .label { color: #888; font-size: 12px; margin-bottom: 4px; margin-top: 12px; }
+  .title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #888; margin-bottom: 16px; }
+  .divider { height: 1px; background: #eee; margin: 12px 0; }
+  .field {
+    border: 1.5px solid #bbb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .field .field-label { font-size: 11px; color: #666; position: absolute; top: -8px; left: 8px; background: #fff; padding: 0 4px; }
+  .field .field-value { font-size: 14px; color: #222; margin-top: 2px; }
+  .field .field-value.placeholder { color: #aaa; }
+  .field .field-value.password { letter-spacing: 3px; color: #444; }
+  .btn {
+    display: block; width: 100%; padding: 13px;
+    background: #6750a4; color: #fff;
+    border-radius: 50px; border: none;
+    font-size: 14px; font-weight: 600;
+    text-align: center; margin-top: 4px; margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .btn-outline {
+    background: transparent; color: #6750a4;
+    border: 1.5px solid #6750a4;
+  }
+  .row { display: flex; gap: 8px; }
+  .row .btn { flex: 1; }
+  .hint { font-size: 11px; color: #888; margin-top: 8px; line-height: 1.5; }
+  .card {
+    background: #f3f0fa; border-radius: 12px;
+    padding: 12px; margin-top: 12px;
+  }
+  .card .card-title { font-size: 12px; font-weight: 600; color: #444; margin-bottom: 6px; }
+  .card .card-item { font-size: 11px; color: #666; margin-bottom: 3px; }
+
+  /* Notification mockup */
+  .notif-screen { padding: 0; }
+  .notif-wallpaper {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    padding: 16px;
+    min-height: 200px;
+  }
+  .notif-time { color: #fff; font-size: 42px; font-weight: 200; text-align: center; margin-top: 8px; }
+  .notif-date { color: rgba(255,255,255,0.7); font-size: 14px; text-align: center; margin-bottom: 16px; }
+
+  .notif-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    backdrop-filter: blur(10px);
+  }
+  .notif-card.alert { border-left: 4px solid #f57c00; }
+  .notif-card.status { border-left: 4px solid #6750a4; }
+  .notif-app { font-size: 11px; color: #888; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .notif-app .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-orange { background: #f57c00; }
+  .dot-purple { background: #6750a4; }
+  .notif-title { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .notif-body { font-size: 13px; color: #444; margin-top: 2px; }
+
+  .phone-label { text-align: center; font-weight: 600; color: #555; margin-bottom: 12px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h2>Shelly Monitor – podgląd aplikacji</h2>
+<p class="sub">Tak będzie wyglądać aplikacja na Twoim telefonie</p>
+
+<!-- EKRAN 1: Konfiguracja -->
+<div>
+  <div class="phone-label">📱 Ekran główny (konfiguracja)</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="screen">
+      <div class="title">Shelly Pro 3EM Monitor</div>
+      <div class="subtitle">Powiadomienie gdy suma mocy chwilowej &lt; próg (eksport do sieci)</div>
+      <div class="divider"></div>
+
+      <div class="field">
+        <div class="field-label">URL serwera Shelly Cloud</div>
+        <div class="field-value">https://shelly-13-eu.shelly.cloud</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Auth Key (z konta Shelly Cloud)</div>
+        <div class="field-value password">••••••••••••••••••••</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Device ID</div>
+        <div class="field-value">shellyem3pro-a8032ab1c2d3</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Próg mocy [W]</div>
+        <div class="field-value">-50</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Interwał odpytywania [sekundy]</div>
+        <div class="field-value">30</div>
+      </div>
+
+      <div class="btn">Zapisano ✓</div>
+      <div class="divider"></div>
+
+      <div class="row">
+        <div class="btn">▶ Start</div>
+        <div class="btn btn-outline">■ Stop</div>
+      </div>
+
+      <div class="hint">Po naciśnięciu Start serwis działa w tle. Alert zostanie wysłany tylko raz przy każdym przejściu poniżej progu.</div>
+
+      <div class="card">
+        <div class="card-title">Jak znaleźć dane konfiguracyjne:</div>
+        <div class="card-item">• Auth Key: Shelly Cloud → My Account → Security</div>
+        <div class="card-item">• Device ID: Shelly Cloud → urządzenie → Settings</div>
+        <div class="card-item">• URL serwera: widoczny w Shelly Cloud</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EKRAN 2: Powiadomienia -->
+<div>
+  <div class="phone-label">🔔 Powiadomienia (po naciśnięciu Start)</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="notif-screen">
+      <div class="notif-wallpaper">
+        <div class="notif-time">9:41</div>
+        <div class="notif-date">piątek, 12 czerwca</div>
+
+        <!-- Alert powiadomienie -->
+        <div class="notif-card alert">
+          <div class="notif-app">
+            <span class="dot dot-orange"></span>
+            <span>Shelly Monitor · teraz</span>
+          </div>
+          <div class="notif-title">⚡ Eksport energii do sieci!</div>
+          <div class="notif-body">Moc chwilowa: -87.2 W (próg: -50 W)</div>
+        </div>
+
+        <!-- Status powiadomienie (trwałe) -->
+        <div class="notif-card status">
+          <div class="notif-app">
+            <span class="dot dot-purple"></span>
+            <span>Shelly Monitor · działa w tle</span>
+          </div>
+          <div class="notif-title">Shelly Monitor</div>
+          <div class="notif-body">Moc: -87.2 W</div>
+        </div>
+
+      </div>
+    </div>
+    <div style="padding: 12px; background:#f9f9f9;">
+      <div style="font-size:11px; color:#888; text-align:center;">
+        Fioletowe = zawsze widoczny status aktualnej mocy<br>
+        Pomarańczowe = alert tylko gdy przekroczony próg
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
