@@ -1,0 +1,1945 @@
+{
+ "seed": 42,
+ "baseline": [
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular"
+  },
+  {
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  },
+  {
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular"
+  }
+ ],
+ "regularity_verbal": [
+  {
+   "id": "regular_1",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.73,
+   "probs": {
+    "regular": 0.8,
+    "slightly_irregular": 0.19,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_2",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.92,
+   "probs": {
+    "regular": 0.94,
+    "slightly_irregular": 0.06,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_3",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.87,
+   "probs": {
+    "regular": 0.9,
+    "slightly_irregular": 0.09,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_4",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.32,
+   "probs": {
+    "regular": 0.49,
+    "slightly_irregular": 0.38,
+    "markedly_irregular": 0.13,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_5",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.81,
+   "probs": {
+    "regular": 0.86,
+    "slightly_irregular": 0.14,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_6",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.39,
+   "probs": {
+    "regular": 0.54,
+    "slightly_irregular": 0.44,
+    "markedly_irregular": 0.02,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_7",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.48,
+   "probs": {
+    "regular": 0.61,
+    "slightly_irregular": 0.28,
+    "markedly_irregular": 0.11,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_8",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.87,
+   "probs": {
+    "regular": 0.9,
+    "slightly_irregular": 0.09,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_1",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.49,
+   "probs": {
+    "regular": 0.36,
+    "slightly_irregular": 0.62,
+    "markedly_irregular": 0.02,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_2",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.57,
+   "probs": {
+    "regular": 0.31,
+    "slightly_irregular": 0.68,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_3",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.48,
+   "probs": {
+    "regular": 0.38,
+    "slightly_irregular": 0.61,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_4",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.67,
+   "probs": {
+    "regular": 0.24,
+    "slightly_irregular": 0.75,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_5",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "regular",
+   "conf": 0.35,
+   "probs": {
+    "regular": 0.51,
+    "slightly_irregular": 0.49,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_6",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.39,
+   "probs": {
+    "regular": 0.46,
+    "slightly_irregular": 0.54,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_7",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.69,
+   "probs": {
+    "regular": 0.22,
+    "slightly_irregular": 0.77,
+    "markedly_irregular": 0.01,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_8",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 0.57,
+   "probs": {
+    "regular": 0.32,
+    "slightly_irregular": 0.68,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_1",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_2",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_3",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_4",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_5",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_6",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_1",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 0.99,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0.01,
+    "markedly_irregular": 0.99,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_2",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 0.99,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0.01,
+    "markedly_irregular": 0.99,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_3",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_4",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 0.96,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0.03,
+    "markedly_irregular": 0.97,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_5",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 0.96,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0.03,
+    "markedly_irregular": 0.97,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_6",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 0.97,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0.02,
+    "markedly_irregular": 0.98,
+    "cannot_judge": 0
+   }
+  }
+ ],
+ "regularity_numeric": [
+  {
+   "id": "regular_1",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 1,
+   "probs": {
+    "regular": 1,
+    "slightly_irregular": 0,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_2",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 1,
+   "probs": {
+    "regular": 1,
+    "slightly_irregular": 0,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_3",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.99,
+   "probs": {
+    "regular": 0.99,
+    "slightly_irregular": 0.01,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_4",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 1,
+   "probs": {
+    "regular": 1,
+    "slightly_irregular": 0,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_5",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 1,
+   "probs": {
+    "regular": 1,
+    "slightly_irregular": 0,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_6",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.99,
+   "probs": {
+    "regular": 0.99,
+    "slightly_irregular": 0.01,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_7",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 0.96,
+   "probs": {
+    "regular": 0.97,
+    "slightly_irregular": 0.01,
+    "markedly_irregular": 0.02,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "regular_8",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "pred": "regular",
+   "conf": 1,
+   "probs": {
+    "regular": 1,
+    "slightly_irregular": 0,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_1",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_2",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_3",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_4",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_5",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_6",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_7",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "slightly_irregular_8",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "pred": "slightly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 1,
+    "markedly_irregular": 0,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_1",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_2",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_3",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_4",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_5",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "ectopic_6",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_1",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_2",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_3",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_4",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_5",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  },
+  {
+   "id": "random_6",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "pred": "markedly_irregular",
+   "conf": 1,
+   "probs": {
+    "regular": 0,
+    "slightly_irregular": 0,
+    "markedly_irregular": 1,
+    "cannot_judge": 0
+   }
+  }
+ ],
+ "przypadki": [
+  {
+   "id": "regular_1",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    1.02,
+    1.01,
+    0.99,
+    1,
+    1,
+    1,
+    1.01,
+    0.99,
+    1.02,
+    1.01,
+    0.96,
+    1,
+    1.02,
+    0.98,
+    1.02,
+    0.99,
+    1,
+    1.03,
+    0.96,
+    1,
+    1.01,
+    1,
+    0.99,
+    0.99,
+    1.03,
+    0.99,
+    1.02,
+    1.05,
+    1.02
+   ]
+  },
+  {
+   "id": "regular_2",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    0.67,
+    0.67,
+    0.7,
+    0.69,
+    0.68,
+    0.68,
+    0.66,
+    0.65,
+    0.66,
+    0.66,
+    0.67,
+    0.66,
+    0.65,
+    0.66,
+    0.67,
+    0.68,
+    0.67,
+    0.68,
+    0.69,
+    0.67,
+    0.66,
+    0.68,
+    0.66,
+    0.69,
+    0.68,
+    0.67,
+    0.66,
+    0.67,
+    0.65,
+    0.67,
+    0.66,
+    0.68,
+    0.68,
+    0.67,
+    0.68,
+    0.67,
+    0.67,
+    0.66,
+    0.67,
+    0.66,
+    0.66,
+    0.69,
+    0.65
+   ]
+  },
+  {
+   "id": "regular_3",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    0.8,
+    0.78,
+    0.79,
+    0.8,
+    0.79,
+    0.8,
+    0.77,
+    0.8,
+    0.81,
+    0.8,
+    0.78,
+    0.77,
+    0.8,
+    0.79,
+    0.8,
+    0.81,
+    0.83,
+    0.78,
+    0.81,
+    0.81,
+    0.8,
+    0.81,
+    0.79,
+    0.8,
+    0.81,
+    0.8,
+    0.8,
+    0.8,
+    0.78,
+    0.81,
+    0.79,
+    0.81,
+    0.83,
+    0.79,
+    0.82,
+    0.82
+   ]
+  },
+  {
+   "id": "regular_4",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    0.79,
+    0.78,
+    0.78,
+    0.78,
+    0.78,
+    0.81,
+    0.78,
+    0.79,
+    0.77,
+    0.78,
+    0.8,
+    0.79,
+    0.82,
+    0.79,
+    0.85,
+    0.76,
+    0.78,
+    0.79,
+    0.8,
+    0.81,
+    0.8,
+    0.8,
+    0.82,
+    0.8,
+    0.81,
+    0.8,
+    0.81,
+    0.82,
+    0.8,
+    0.78,
+    0.81,
+    0.8,
+    0.79,
+    0.81,
+    0.8,
+    0.81
+   ]
+  },
+  {
+   "id": "regular_5",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    1.02,
+    1.03,
+    1.04,
+    0.97,
+    1.01,
+    1.02,
+    0.99,
+    0.98,
+    1.01,
+    1.02,
+    0.98,
+    0.99,
+    0.99,
+    0.98,
+    0.99,
+    0.99,
+    1.04,
+    0.98,
+    1.03,
+    0.97,
+    1.03,
+    1,
+    1,
+    0.99,
+    0.99,
+    0.97,
+    1.01,
+    1.01,
+    1.02
+   ]
+  },
+  {
+   "id": "regular_6",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    1.21,
+    1.22,
+    1.23,
+    1.23,
+    1.24,
+    1.18,
+    1.15,
+    1.16,
+    1.17,
+    1.26,
+    1.2,
+    1.23,
+    1.2,
+    1.21,
+    1.19,
+    1.19,
+    1.2,
+    1.24,
+    1.2,
+    1.22,
+    1.27,
+    1.18,
+    1.16,
+    1.21
+   ]
+  },
+  {
+   "id": "regular_7",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    0.67,
+    0.68,
+    0.67,
+    0.68,
+    0.66,
+    0.67,
+    0.67,
+    0.67,
+    0.67,
+    0.66,
+    0.66,
+    0.68,
+    0.66,
+    0.67,
+    0.69,
+    0.67,
+    0.66,
+    0.65,
+    0.67,
+    0.68,
+    0.66,
+    0.66,
+    0.68,
+    0.65,
+    0.66,
+    0.66,
+    0.65,
+    0.66,
+    0.67,
+    0.67,
+    0.65,
+    0.67,
+    0.63,
+    0.7,
+    0.68,
+    0.68,
+    0.69,
+    0.67,
+    0.68,
+    0.68,
+    0.67,
+    0.67,
+    0.68
+   ]
+  },
+  {
+   "id": "regular_8",
+   "podtyp": "regular",
+   "prawda": "regular",
+   "rr": [
+    1.2,
+    1.19,
+    1.24,
+    1.18,
+    1.24,
+    1.2,
+    1.21,
+    1.21,
+    1.17,
+    1.23,
+    1.2,
+    1.23,
+    1.21,
+    1.21,
+    1.17,
+    1.17,
+    1.2,
+    1.18,
+    1.2,
+    1.23,
+    1.22,
+    1.2,
+    1.19,
+    1.2
+   ]
+  },
+  {
+   "id": "slightly_irregular_1",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    1.26,
+    1.21,
+    1.14,
+    1.15,
+    1.28,
+    1.27,
+    1.19,
+    1.13,
+    1.19,
+    1.29,
+    1.21,
+    1.12,
+    1.16,
+    1.24,
+    1.23,
+    1.15,
+    1.15,
+    1.2,
+    1.26,
+    1.22,
+    1.14,
+    1.17,
+    1.25,
+    1.23
+   ]
+  },
+  {
+   "id": "slightly_irregular_2",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    0.94,
+    0.94,
+    0.99,
+    1.09,
+    1.07,
+    0.99,
+    0.94,
+    0.93,
+    0.99,
+    1.09,
+    1.07,
+    1,
+    0.94,
+    0.94,
+    1.02,
+    1.07,
+    1.07,
+    1,
+    0.94,
+    0.98,
+    1.04,
+    1.06,
+    1.06,
+    0.96,
+    0.94,
+    0.96,
+    1.03,
+    1.08,
+    1.04
+   ]
+  },
+  {
+   "id": "slightly_irregular_3",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    1.08,
+    0.98,
+    0.93,
+    1,
+    1.08,
+    1,
+    0.91,
+    1,
+    1.08,
+    1.02,
+    0.93,
+    1,
+    1.07,
+    1.02,
+    0.95,
+    0.98,
+    1.08,
+    1.02,
+    0.95,
+    0.97,
+    1.07,
+    1.03,
+    0.95,
+    0.97,
+    1.08,
+    1.04,
+    0.95,
+    0.95,
+    1.06
+   ]
+  },
+  {
+   "id": "slightly_irregular_4",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    0.82,
+    0.85,
+    0.78,
+    0.75,
+    0.83,
+    0.87,
+    0.79,
+    0.72,
+    0.8,
+    0.85,
+    0.82,
+    0.76,
+    0.76,
+    0.85,
+    0.86,
+    0.79,
+    0.74,
+    0.8,
+    0.87,
+    0.81,
+    0.74,
+    0.78,
+    0.85,
+    0.83,
+    0.75,
+    0.75,
+    0.83,
+    0.85,
+    0.78,
+    0.75,
+    0.8,
+    0.85,
+    0.81,
+    0.74,
+    0.78,
+    0.85
+   ]
+  },
+  {
+   "id": "slightly_irregular_5",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    0.85,
+    0.76,
+    0.77,
+    0.84,
+    0.85,
+    0.77,
+    0.76,
+    0.83,
+    0.86,
+    0.82,
+    0.74,
+    0.8,
+    0.86,
+    0.8,
+    0.76,
+    0.77,
+    0.85,
+    0.83,
+    0.76,
+    0.77,
+    0.83,
+    0.84,
+    0.75,
+    0.75,
+    0.82,
+    0.85,
+    0.8,
+    0.74,
+    0.81,
+    0.86,
+    0.81,
+    0.75,
+    0.77,
+    0.84,
+    0.81,
+    0.75
+   ]
+  },
+  {
+   "id": "slightly_irregular_6",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    0.97,
+    1.06,
+    1.04,
+    0.97,
+    0.96,
+    1.03,
+    1.05,
+    0.98,
+    0.94,
+    1.03,
+    1.07,
+    0.98,
+    0.91,
+    0.98,
+    1.06,
+    1.02,
+    0.94,
+    0.99,
+    1.05,
+    1.03,
+    0.95,
+    0.97,
+    1.04,
+    1.06,
+    1,
+    0.96,
+    1.01,
+    1.06,
+    0.99
+   ]
+  },
+  {
+   "id": "slightly_irregular_7",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    1.13,
+    1.14,
+    1.23,
+    1.3,
+    1.24,
+    1.17,
+    1.11,
+    1.16,
+    1.26,
+    1.29,
+    1.25,
+    1.14,
+    1.13,
+    1.17,
+    1.27,
+    1.26,
+    1.22,
+    1.15,
+    1.13,
+    1.21,
+    1.27,
+    1.28,
+    1.16,
+    1.14
+   ]
+  },
+  {
+   "id": "slightly_irregular_8",
+   "podtyp": "slightly_irregular",
+   "prawda": "slightly_irregular",
+   "rr": [
+    0.85,
+    0.83,
+    0.76,
+    0.73,
+    0.8,
+    0.86,
+    0.84,
+    0.78,
+    0.75,
+    0.78,
+    0.84,
+    0.83,
+    0.78,
+    0.73,
+    0.78,
+    0.84,
+    0.85,
+    0.79,
+    0.75,
+    0.77,
+    0.84,
+    0.84,
+    0.78,
+    0.75,
+    0.77,
+    0.85,
+    0.86,
+    0.81,
+    0.74,
+    0.77,
+    0.85,
+    0.84,
+    0.79,
+    0.76,
+    0.76,
+    0.83
+   ]
+  },
+  {
+   "id": "ectopic_1",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "rr": [
+    0.99,
+    0.98,
+    0.6,
+    1.42,
+    1,
+    1.01,
+    1,
+    0.98,
+    0.61,
+    1.4,
+    1,
+    1.01,
+    0.98,
+    1.02,
+    1.01,
+    1,
+    1,
+    1,
+    1.01,
+    1.02,
+    1,
+    0.99,
+    0.98,
+    1,
+    0.98,
+    0.99,
+    0.97,
+    1.01,
+    1
+   ]
+  },
+  {
+   "id": "ectopic_2",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "rr": [
+    1.19,
+    1.21,
+    1.2,
+    0.74,
+    1.64,
+    1.23,
+    1.17,
+    1.2,
+    1.21,
+    1.21,
+    0.73,
+    1.75,
+    1.19,
+    1.23,
+    1.19,
+    1.21,
+    1.19,
+    0.74,
+    1.69,
+    1.21,
+    1.2,
+    1.22,
+    1.19,
+    1.2
+   ]
+  },
+  {
+   "id": "ectopic_3",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "rr": [
+    0.99,
+    1.02,
+    0.99,
+    1.01,
+    0.6,
+    1.4,
+    1.02,
+    1,
+    1,
+    0.99,
+    1.02,
+    1.04,
+    0.6,
+    1.41,
+    1.01,
+    1.01,
+    0.99,
+    0.99,
+    0.99,
+    0.98,
+    0.99,
+    0.61,
+    1.42,
+    1.03,
+    0.97,
+    1.03,
+    1.01,
+    1.03,
+    1
+   ]
+  },
+  {
+   "id": "ectopic_4",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "rr": [
+    0.81,
+    0.78,
+    0.8,
+    0.84,
+    0.48,
+    1.12,
+    0.8,
+    0.81,
+    0.78,
+    0.8,
+    0.8,
+    0.78,
+    0.78,
+    0.47,
+    1.11,
+    0.79,
+    0.81,
+    0.81,
+    0.81,
+    0.46,
+    1.08,
+    0.79,
+    0.8,
+    0.82,
+    0.79,
+    0.81,
+    0.81,
+    0.82,
+    0.79,
+    0.77,
+    0.81,
+    0.79,
+    0.82,
+    0.8,
+    0.8,
+    0.79
+   ]
+  },
+  {
+   "id": "ectopic_5",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "rr": [
+    1.21,
+    1.23,
+    1.2,
+    0.72,
+    1.68,
+    1.19,
+    1.2,
+    1.18,
+    1.22,
+    1.18,
+    0.7,
+    1.64,
+    1.18,
+    1.2,
+    1.2,
+    1.22,
+    1.17,
+    0.71,
+    1.69,
+    1.19,
+    1.21,
+    1.2,
+    1.18,
+    1.18
+   ]
+  },
+  {
+   "id": "ectopic_6",
+   "podtyp": "ectopic",
+   "prawda": "markedly_irregular",
+   "rr": [
+    1.18,
+    1.2,
+    1.2,
+    0.72,
+    1.64,
+    1.19,
+    1.24,
+    1.23,
+    1.19,
+    1.19,
+    1.22,
+    1.21,
+    0.72,
+    1.67,
+    1.19,
+    1.22,
+    1.2,
+    1.23,
+    1.21,
+    1.19,
+    1.22,
+    1.18,
+    1.21,
+    1.18
+   ]
+  },
+  {
+   "id": "random_1",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "rr": [
+    0.55,
+    0.86,
+    0.98,
+    1.11,
+    0.53,
+    0.82,
+    1.08,
+    0.96,
+    1.09,
+    1.01,
+    1.14,
+    1.02,
+    0.54,
+    0.81,
+    0.78,
+    0.63,
+    1.18,
+    0.62,
+    0.85,
+    1.14,
+    0.71,
+    0.89,
+    0.95,
+    0.98,
+    0.56,
+    0.7,
+    1.18,
+    0.82,
+    0.55,
+    0.83,
+    0.78,
+    0.54,
+    1.06,
+    0.86
+   ]
+  },
+  {
+   "id": "random_2",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "rr": [
+    0.91,
+    0.75,
+    0.99,
+    0.95,
+    0.58,
+    0.58,
+    0.74,
+    0.58,
+    0.41,
+    0.89,
+    0.6,
+    0.71,
+    0.89,
+    0.98,
+    0.59,
+    0.89,
+    0.61,
+    0.6,
+    0.76,
+    0.71,
+    0.43,
+    0.78,
+    0.63,
+    0.96,
+    0.8,
+    0.47,
+    0.74,
+    0.93,
+    0.64,
+    0.98,
+    0.7,
+    0.55,
+    0.5,
+    0.82,
+    0.8,
+    0.44,
+    0.52,
+    0.52,
+    0.97,
+    0.59
+   ]
+  },
+  {
+   "id": "random_3",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "rr": [
+    1.16,
+    0.92,
+    0.9,
+    0.83,
+    0.9,
+    1.11,
+    0.69,
+    1.11,
+    0.87,
+    1.04,
+    1.16,
+    0.5,
+    0.52,
+    1.12,
+    0.99,
+    0.92,
+    0.88,
+    1.11,
+    0.49,
+    0.59,
+    0.93,
+    0.91,
+    0.82,
+    0.63,
+    0.66,
+    0.72,
+    0.97,
+    0.98,
+    0.59,
+    0.87,
+    1.01,
+    1.11,
+    1
+   ]
+  },
+  {
+   "id": "random_4",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "rr": [
+    1.38,
+    1.19,
+    1.47,
+    0.81,
+    0.95,
+    0.91,
+    0.63,
+    1.12,
+    1.22,
+    0.86,
+    0.63,
+    0.72,
+    1.3,
+    0.93,
+    1.11,
+    0.89,
+    0.7,
+    0.74,
+    1.12,
+    0.88,
+    1.25,
+    1.45,
+    1.46,
+    1.31,
+    0.75,
+    0.86,
+    1.02,
+    0.73
+   ]
+  },
+  {
+   "id": "random_5",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "rr": [
+    1.44,
+    1.25,
+    1.79,
+    1.25,
+    1.35,
+    0.82,
+    1.72,
+    0.88,
+    1.23,
+    1.75,
+    1.58,
+    1.3,
+    1.7,
+    1.52,
+    0.95,
+    0.92,
+    0.92,
+    1.22,
+    1.19,
+    1.26,
+    1.6,
+    1.49
+   ]
+  },
+  {
+   "id": "random_6",
+   "podtyp": "random",
+   "prawda": "markedly_irregular",
+   "rr": [
+    0.99,
+    0.54,
+    0.55,
+    0.88,
+    0.68,
+    0.71,
+    0.47,
+    0.74,
+    0.67,
+    0.49,
+    0.95,
+    1,
+    1.01,
+    0.45,
+    0.84,
+    0.99,
+    0.55,
+    0.92,
+    0.67,
+    0.57,
+    0.96,
+    0.51,
+    0.58,
+    0.47,
+    0.62,
+    0.78,
+    0.56,
+    1,
+    0.93,
+    0.59,
+    0.99,
+    0.63,
+    0.7,
+    0.52,
+    0.7,
+    0.66,
+    0.84,
+    0.77,
+    0.75,
+    0.99
+   ]
+  }
+ ]
+}
