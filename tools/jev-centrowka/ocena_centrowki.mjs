@@ -2,6 +2,8 @@
 // Użycie:
 //   node ocena_centrowki.mjs pomiar.json --dry-run   # pokazuje zapytanie, bez wywołania API
 //   TYPESAFE_API_KEY=... node ocena_centrowki.mjs pomiar.json
+// W sesji Claude Code w chmurze klucz dokleja proxy (sekret sieciowy), więc:
+//   TYPESAFE_API_KEY=placeholder NODE_USE_ENV_PROXY=1 node ocena_centrowki.mjs pomiar.json
 import { readFileSync } from "node:fs";
 
 const [, , plik = "pomiar.json", ...flagi] = process.argv;
@@ -88,7 +90,7 @@ const questions = {
     instructions: kontekst +
       "Is mechanical looseness a plausible alternative explanation (long series of harmonics, possible 0.5x)?",
   },
-  alt_soft_foot: {
+  check_soft_foot: {
     type: "noul",
     instructions: kontekst +
       "Should soft foot be checked before re-alignment, given the data and technician notes?",
@@ -133,5 +135,6 @@ console.log(`Niewspółosiowość: p = ${r2(p)}`);
 console.log(`Rodzaj: ${typ.choice} (pewność ${r2(typ.confidence)})`, typ.probabilities);
 console.log(`Pilność: ${r2(answers.severity.score)} / 3 – ${answers.severity.legend[Math.round(answers.severity.score)]}`);
 console.log(`Alternatywne przyczyny ≥ 0.5: ${alternatywy.join(", ") || "brak"}`);
+console.log(`Sprawdzić miękką stopę przed centrowaniem: ${answers.check_soft_foot.noul >= 0.5 ? "tak" : "nie"} (${r2(answers.check_soft_foot.noul)})`);
 console.log(doDiagnosty ? "➜ Do weryfikacji przez diagnostę." : "➜ Wynik jednoznaczny.");
 console.log(`Tokeny: we ${usage.input_tokens}, wy ${usage.output_tokens}`);

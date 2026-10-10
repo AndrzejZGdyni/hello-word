@@ -101,7 +101,7 @@
       "type": "noul",
       "instructions": "Use the vibration spectra in `bearings_on_both_sides_of_coupling` (1x, 2x, 3x running-speed harmonics in H, V and A directions), the ratios in `computed_indicators` and the phase differences in `phase_across_coupling`. Is mechanical looseness a plausible alternative explanation (long series of harmonics, possible 0.5x)?"
     },
-    "alt_soft_foot": {
+    "check_soft_foot": {
       "type": "noul",
       "instructions": "Use the vibration spectra in `bearings_on_both_sides_of_coupling` (1x, 2x, 3x running-speed harmonics in H, V and A directions), the ratios in `computed_indicators` and the phase differences in `phase_across_coupling`. Should soft foot be checked before re-alignment, given the data and technician notes?"
     },
