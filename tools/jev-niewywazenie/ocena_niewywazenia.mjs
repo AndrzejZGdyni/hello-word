@@ -45,6 +45,40 @@ const fazaMiedzyLozyskami = {
   phase_diff_DE_NDE_vertical_1x_deg: roznicaFaz(de.phase_1x.V, nde.phase_1x.V),
 };
 
+// --- 2a. Rozkład wektorów 1x na składową statyczną S i parową C ---
+// S = (A_DE + A_NDE) / 2, C = (A_DE − A_NDE) / 2; |C|/|S| < PROG_PAROWEJ → wystarczy 1 płaszczyzna.
+const PROG_PAROWEJ = 0.2; // reguła praktyczna, nie wartość normowa – do kalibracji
+const PROG_SPOJNOSCI_DEG = 30; // max różnica Δφ(DE–NDE) między kierunkami H i V
+const wektor = (amp, fazaDeg) => {
+  const rad = (fazaDeg * Math.PI) / 180;
+  return [amp * Math.cos(rad), amp * Math.sin(rad)];
+};
+const modul = ([x, y]) => Math.hypot(x, y);
+const rozkladSC = {};
+for (const kier of ["H", "V"]) {
+  const a = wektor(de[kier]["1x"], de.phase_1x[kier]);
+  const b = wektor(nde[kier]["1x"], nde.phase_1x[kier]);
+  const S = modul([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]);
+  const C = modul([(a[0] - b[0]) / 2, (a[1] - b[1]) / 2]);
+  rozkladSC[kier] = { static_S_mm_s: r2(S), couple_C_mm_s: r2(C), ratio_C_to_S: r2(C / S) };
+}
+const roznicaKierunkow = Math.abs(
+  fazaMiedzyLozyskami.phase_diff_DE_NDE_horizontal_1x_deg - fazaMiedzyLozyskami.phase_diff_DE_NDE_vertical_1x_deg,
+);
+const maxCdoS = Math.max(rozkladSC.H.ratio_C_to_S, rozkladSC.V.ratio_C_to_S);
+const maxC = Math.max(rozkladSC.H.couple_C_mm_s, rozkladSC.V.couple_C_mm_s);
+const dekompozycja = {
+  by_direction: rozkladSC,
+  phase_consistency_H_vs_V_deg: roznicaKierunkow,
+  phase_consistent: roznicaKierunkow <= PROG_SPOJNOSCI_DEG,
+  max_ratio_C_to_S: maxCdoS,
+  couple_threshold: PROG_PAROWEJ,
+  // po idealnej korekcie w 1 płaszczyźnie zostaje ok. |C| na łożyskach
+  est_residual_after_single_plane_mm_s: maxC,
+  est_residual_zone: ["A", "B", "C", "D"][granice.filter((g) => maxC > g).length],
+  planes_by_rule: maxCdoS < PROG_PAROWEJ ? 1 : 2,
+};
+
 // --- 3. Stan przekazywany do Jev ---
 const state = {
   machine: pomiar.maszyna,
@@ -52,6 +86,7 @@ const state = {
   bearings: pomiar.lozyska,
   computed_indicators: wskazniki,
   phase_between_bearings: fazaMiedzyLozyskami,
+  static_couple_decomposition: dekompozycja,
   iso_20816_3: { zone: strefa, max_overall_mm_s: maxOverall, zone_limits_AB_BC_CD: granice },
   technician_notes: pomiar.obserwacje ?? null,
 };
@@ -59,6 +94,8 @@ const state = {
 const kontekst =
   "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in " +
   "`computed_indicators`, the phase between bearings in `phase_between_bearings`, " +
+  "the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, " +
+  "C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), " +
   "the ISO 20816-3 zone and `technician_notes`. ";
 
 // --- 4. Pytania (niezależne, wykonywane równolegle) ---
@@ -75,9 +112,9 @@ const questions = {
     type: "choice",
     instructions: kontekst + "Which type of unbalance best matches the phase relationship between the bearings?",
     criteria: {
-      static: "Bearings vibrate in phase (DE–NDE phase difference near 0 deg in the same direction).",
-      couple: "Bearings vibrate in antiphase (DE–NDE phase difference near 180 deg).",
-      dynamic: "Combination of static and couple: DE–NDE phase difference clearly between 0 and 180 deg.",
+      static: "Bearings vibrate in phase (DE–NDE phase difference near 0 deg); couple component C small relative to static S (C/S below threshold).",
+      couple: "Bearings vibrate in antiphase (DE–NDE phase difference near 180 deg); static component S small relative to couple C.",
+      dynamic: "Combination of static and couple: DE–NDE phase difference clearly between 0 and 180 deg; both S and C significant (C/S above threshold).",
       overhung: "Overhung rotor: high axial 1x in phase at both bearings, radial phase pattern irregular.",
       none: "No unbalance is present.",
     },
@@ -95,6 +132,17 @@ const questions = {
     type: "noul",
     instructions: kontekst +
       "Is a structural resonance near running speed a plausible amplifier (strongly directional 1x, unstable phase, very high H/V ratio)?",
+  },
+  balancing_planes: {
+    type: "choice",
+    instructions: kontekst +
+      "If the rotor is balanced, how many correction planes are needed? Judge from the static/couple decomposition, " +
+      "its H/V phase consistency and the expected residual vibration after single-plane correction.",
+    criteria: {
+      one_plane: "Couple component negligible (C/S below threshold in both directions, phases consistent); single-plane correction leaves acceptable residual vibration.",
+      two_planes: "Couple component significant (C/S above threshold) or single-plane correction would leave residual vibration above the target zone.",
+      not_applicable: "Unbalance is not the problem, or phase data are inconsistent and cannot support a balancing decision.",
+    },
   },
   action: {
     type: "choice",
@@ -128,14 +176,30 @@ const act = answers.action;
 const alternatywy = Object.entries(answers)
   .filter(([k, v]) => k.startsWith("alt_") && v.noul >= 0.5)
   .map(([k, v]) => `${k.replace("alt_", "")} (${r2(v.noul)})`);
+const plaszczyzny = answers.balancing_planes;
+const planyJev = { one_plane: 1, two_planes: 2 }[plaszczyzny.choice];
+// rozbieżność między regułą |C|/|S| a oceną Jev lub niespójna faza H/V → diagnosta
+const rozbieznoscPlaszczyzn = planyJev !== undefined && planyJev !== dekompozycja.planes_by_rule;
 const doDiagnosty =
-  (p > 0.3 && p < 0.7) || typ.confidence < 0.6 || act.confidence < 0.6 || alternatywy.length > 0;
+  (p > 0.3 && p < 0.7) || typ.confidence < 0.6 || act.confidence < 0.6 || plaszczyzny.confidence < 0.6 ||
+  alternatywy.length > 0 || !dekompozycja.phase_consistent || rozbieznoscPlaszczyzn;
 
 console.log(`Model: ${model}`);
 console.log(`ISO 20816-3: strefa ${strefa} (max ${maxOverall} mm/s; granice ${granice.join(" / ")})`);
 console.log("Wskaźniki:", JSON.stringify(wskazniki), JSON.stringify(fazaMiedzyLozyskami));
 console.log(`Niewyważenie: p = ${r2(p)}`);
 console.log(`Rodzaj: ${typ.choice} (pewność ${r2(typ.confidence)})`, typ.probabilities);
+console.log(
+  `Rozkład S/C: H |S|=${rozkladSC.H.static_S_mm_s} |C|=${rozkladSC.H.couple_C_mm_s} (C/S ${rozkladSC.H.ratio_C_to_S}); ` +
+    `V |S|=${rozkladSC.V.static_S_mm_s} |C|=${rozkladSC.V.couple_C_mm_s} (C/S ${rozkladSC.V.ratio_C_to_S}); ` +
+    `spójność H/V ${dekompozycja.phase_consistency_H_vs_V_deg}° (${dekompozycja.phase_consistent ? "OK" : "NIESPÓJNE"})`,
+);
+console.log(
+  `Reguła: ${dekompozycja.planes_by_rule} płaszczyzn(a) (próg C/S ${PROG_PAROWEJ}); ` +
+    `szac. drgania po korekcie w 1 płaszczyźnie ≈ ${dekompozycja.est_residual_after_single_plane_mm_s} mm/s (strefa ${dekompozycja.est_residual_zone})`,
+);
+console.log(`Płaszczyzny wg Jev: ${plaszczyzny.choice} (pewność ${r2(plaszczyzny.confidence)})`, plaszczyzny.probabilities);
+if (rozbieznoscPlaszczyzn) console.log("⚠ Jev i reguła C/S wskazują różną liczbę płaszczyzn.");
 console.log(`Alternatywne przyczyny ≥ 0.5: ${alternatywy.join(", ") || "brak"}`);
 console.log(`Zalecenie: ${act.choice} (pewność ${r2(act.confidence)})`, act.probabilities);
 console.log(doDiagnosty ? "➜ Do weryfikacji przez diagnostę." : "➜ Wynik jednoznaczny.");
