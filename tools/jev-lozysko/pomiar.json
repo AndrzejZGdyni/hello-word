@@ -1,0 +1,33 @@
+{
+  "_uwaga": "DANE PRZYKŁADOWE – zastąp własnym pomiarem. Częstotliwości w Hz, obwiednia w gE, przyspieszenie w g.",
+  "maszyna": {
+    "opis": "Wentylator promieniowy, napęd bezpośredni, łożysko po stronie wirnika",
+    "obroty_rpm": 1485
+  },
+  "lozysko": {
+    "oznaczenie": "6309",
+    "liczba_elementow_tocznych": 8,
+    "srednica_elementu_mm": 17.46,
+    "srednica_podzialowa_mm": 72.5,
+    "kat_dzialania_deg": 0
+  },
+  "obwiednia": {
+    "pasmo_filtra_Hz": "500-10000",
+    "prazki": [
+      { "f": 24.8,  "amp": 0.05 },
+      { "f": 75.3,  "amp": 0.62 },
+      { "f": 150.1, "amp": 0.41 },
+      { "f": 225.6, "amp": 0.28 },
+      { "f": 300.9, "amp": 0.15 },
+      { "f": 376.0, "amp": 0.08 }
+    ]
+  },
+  "wskazniki_czasowe": {
+    "kurtoza": 5.8,
+    "wspolczynnik_szczytu": 6.1,
+    "przyspieszenie_RMS_g": 0.9,
+    "poziom_obwiedni_gE": 2.4,
+    "trend_obwiedni_ostatnie_3_mies": "wzrost z 0.6 do 2.4 gE"
+  },
+  "obserwacje": "Temperatura obudowy łożyska 58 °C, stabilna. Ostatnie smarowanie 2 tygodnie temu."
+}
