@@ -1,0 +1,9 @@
+node_modules/
+# Zapisy EKG i dane pochodne z prawdziwych zapisów zostają lokalnie (repozytorium jest publiczne)
+*.pdf
+*.png
+*.jpg
+*.jpeg
+wynik*.json
+pomiar.json
+zapytanie.json
