@@ -1,0 +1,136 @@
+{
+  "model": "jev-latest",
+  "state": {
+    "machine": {
+      "opis": "Wentylator promieniowy, napęd bezpośredni, łożysko po stronie wirnika",
+      "obroty_rpm": 1485
+    },
+    "bearing": {
+      "oznaczenie": "6309",
+      "liczba_elementow_tocznych": 8,
+      "srednica_elementu_mm": 17.46,
+      "srednica_podzialowa_mm": 72.5,
+      "kat_dzialania_deg": 0
+    },
+    "units": "envelope spectrum amplitudes in gE; acceleration in g; frequencies in Hz",
+    "characteristic_frequencies_Hz": {
+      "running_speed_1x": 24.75,
+      "BPFO_outer_race": 75.16,
+      "BPFI_inner_race": 122.84,
+      "BSF_rolling_element": 48.41,
+      "FTF_cage": 9.39
+    },
+    "envelope_filter_band_Hz": "500-10000",
+    "envelope_peak_matches": {
+      "BPFO_outer_race": {
+        "expected_Hz": 75.16,
+        "harmonics_found": [
+          {
+            "order": 1,
+            "f": 75.3,
+            "amp_gE": 0.62
+          },
+          {
+            "order": 2,
+            "f": 150.1,
+            "amp_gE": 0.41
+          },
+          {
+            "order": 3,
+            "f": 225.6,
+            "amp_gE": 0.28
+          },
+          {
+            "order": 4,
+            "f": 300.9,
+            "amp_gE": 0.15
+          },
+          {
+            "order": 5,
+            "f": 376,
+            "amp_gE": 0.08
+          }
+        ],
+        "harmonics_count": 5,
+        "sideband_matches": {
+          "±1x": 0,
+          "±FTF": 0
+        }
+      },
+      "BPFI_inner_race": {
+        "expected_Hz": 122.84,
+        "harmonics_found": [],
+        "harmonics_count": 0,
+        "sideband_matches": {
+          "±1x": 0,
+          "±FTF": 0
+        }
+      },
+      "BSF_rolling_element": {
+        "expected_Hz": 48.41,
+        "harmonics_found": [],
+        "harmonics_count": 0,
+        "sideband_matches": {
+          "±1x": 0,
+          "±FTF": 0
+        }
+      },
+      "FTF_cage": {
+        "expected_Hz": 9.39,
+        "harmonics_found": [],
+        "harmonics_count": 0,
+        "sideband_matches": {
+          "±1x": 0,
+          "±FTF": 0
+        }
+      }
+    },
+    "unmatched_envelope_peaks": [],
+    "time_domain_indicators": {
+      "kurtoza": 5.8,
+      "wspolczynnik_szczytu": 6.1,
+      "przyspieszenie_RMS_g": 0.9,
+      "poziom_obwiedni_gE": 2.4,
+      "trend_obwiedni_ostatnie_3_mies": "wzrost z 0.6 do 2.4 gE"
+    },
+    "technician_notes": "Temperatura obudowy łożyska 58 °C, stabilna. Ostatnie smarowanie 2 tygodnie temu."
+  },
+  "questions": {
+    "fault_location": {
+      "type": "choice",
+      "instructions": "Use the matched envelope-spectrum peaks in `envelope_peak_matches` (harmonics of the bearing defect frequencies and their sidebands), `unmatched_envelope_peaks`, the indicators in `time_domain_indicators` and `technician_notes`. Which rolling bearing defect best explains the envelope spectrum?",
+      "criteria": {
+        "outer_race": "Series of BPFO harmonics, typically without 1x sidebands (stationary outer ring).",
+        "inner_race": "BPFI harmonics modulated by 1x sidebands (rotating inner ring passes the load zone).",
+        "rolling_element": "BSF (often 2xBSF) harmonics with FTF sidebands.",
+        "cage": "FTF and its harmonics, possibly modulating other defect frequencies.",
+        "none": "No bearing defect frequencies are present; the spectrum is not explained by a bearing defect."
+      }
+    },
+    "damage_stage": {
+      "type": "score",
+      "instructions": "Use the matched envelope-spectrum peaks in `envelope_peak_matches` (harmonics of the bearing defect frequencies and their sidebands), `unmatched_envelope_peaks`, the indicators in `time_domain_indicators` and `technician_notes`. What stage of rolling bearing damage does the evidence indicate?",
+      "criteria": [
+        "Stage 0 – healthy: no defect frequencies, low envelope level, kurtosis near 3.",
+        "Stage 1 – incipient: ultrasonic / high-frequency activity only, defect frequencies barely visible.",
+        "Stage 2 – developing: clear defect frequency with a few harmonics in the envelope, rising trend.",
+        "Stage 3 – advanced: many harmonics and sidebands, high envelope level, defect frequencies may appear in velocity spectrum.",
+        "Stage 4 – near failure: broadband noise floor rise, harmonics smear, 1x rises; failure imminent."
+      ]
+    },
+    "lubrication_problem": {
+      "type": "noul",
+      "instructions": "Use the matched envelope-spectrum peaks in `envelope_peak_matches` (harmonics of the bearing defect frequencies and their sidebands), `unmatched_envelope_peaks`, the indicators in `time_domain_indicators` and `technician_notes`. Is a lubrication problem (insufficient or degraded grease) a more likely explanation than a localized defect? Lubrication issues raise broadband high-frequency levels without discrete defect-frequency harmonics."
+    },
+    "action": {
+      "type": "choice",
+      "instructions": "Use the matched envelope-spectrum peaks in `envelope_peak_matches` (harmonics of the bearing defect frequencies and their sidebands), `unmatched_envelope_peaks`, the indicators in `time_domain_indicators` and `technician_notes`. What maintenance action is most appropriate now?",
+      "criteria": {
+        "continue_monitoring": "No defect or only incipient signs; keep the normal measurement interval.",
+        "shorten_interval": "Developing defect; shorten the measurement interval and plan replacement.",
+        "plan_replacement": "Clear, progressing defect; schedule bearing replacement at the next planned stop.",
+        "replace_urgently": "Advanced damage or near failure; replace as soon as possible."
+      }
+    }
+  }
+}

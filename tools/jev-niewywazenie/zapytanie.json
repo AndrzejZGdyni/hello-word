@@ -1,0 +1,167 @@
+{
+  "model": "jev-latest",
+  "state": {
+    "machine": {
+      "opis": "Wentylator wyciągowy, wirnik między łożyskami, napęd przez sprzęgło",
+      "obroty_rpm": 1480,
+      "moc_kW": 75,
+      "grupa_ISO_20816_3": 2,
+      "fundament": "sztywny"
+    },
+    "units": "vibration velocity mm/s RMS; phase in degrees",
+    "bearings": {
+      "DE": {
+        "H": {
+          "1x": 3.9,
+          "2x": 0.3,
+          "3x": 0.15,
+          "overall": 4
+        },
+        "V": {
+          "1x": 2.6,
+          "2x": 0.2,
+          "3x": 0.1,
+          "overall": 2.7
+        },
+        "A": {
+          "1x": 0.6,
+          "2x": 0.1,
+          "3x": 0.05,
+          "overall": 0.7
+        },
+        "phase_1x": {
+          "H": 30,
+          "V": 122
+        }
+      },
+      "NDE": {
+        "H": {
+          "1x": 3.4,
+          "2x": 0.25,
+          "3x": 0.1,
+          "overall": 3.5
+        },
+        "V": {
+          "1x": 2.3,
+          "2x": 0.2,
+          "3x": 0.1,
+          "overall": 2.4
+        },
+        "A": {
+          "1x": 0.5,
+          "2x": 0.1,
+          "3x": 0.05,
+          "overall": 0.6
+        },
+        "phase_1x": {
+          "H": 78,
+          "V": 165
+        }
+      }
+    },
+    "computed_indicators": {
+      "DE": {
+        "share_1x_of_overall_H": 0.98,
+        "ratio_H_to_V_1x": 1.5,
+        "ratio_axial_to_radial_1x": 0.15,
+        "ratio_2x_to_1x_radial": 0.08,
+        "phase_diff_H_V_1x_deg": 92
+      },
+      "NDE": {
+        "share_1x_of_overall_H": 0.97,
+        "ratio_H_to_V_1x": 1.48,
+        "ratio_axial_to_radial_1x": 0.15,
+        "ratio_2x_to_1x_radial": 0.07,
+        "phase_diff_H_V_1x_deg": 87
+      }
+    },
+    "phase_between_bearings": {
+      "phase_diff_DE_NDE_horizontal_1x_deg": 48,
+      "phase_diff_DE_NDE_vertical_1x_deg": 43
+    },
+    "static_couple_decomposition": {
+      "by_direction": {
+        "H": {
+          "static_S_mm_s": 3.34,
+          "couple_C_mm_s": 1.5,
+          "ratio_C_to_S": 0.45
+        },
+        "V": {
+          "static_S_mm_s": 2.28,
+          "couple_C_mm_s": 0.91,
+          "ratio_C_to_S": 0.4
+        }
+      },
+      "phase_consistency_H_vs_V_deg": 5,
+      "phase_consistent": true,
+      "max_ratio_C_to_S": 0.45,
+      "couple_threshold": 0.2,
+      "est_residual_after_single_plane_mm_s": 1.5,
+      "est_residual_zone": "B",
+      "planes_by_rule": 2
+    },
+    "iso_20816_3": {
+      "zone": "C",
+      "max_overall_mm_s": 4,
+      "zone_limits_AB_BC_CD": [
+        1.4,
+        2.8,
+        4.5
+      ]
+    },
+    "technician_notes": "Drgania rosną stopniowo od ok. 6 miesięcy. Wentylator pracuje w zapylonym powietrzu, łopatek nie czyszczono od roku."
+  },
+  "questions": {
+    "unbalance": {
+      "type": "noul",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. Does the vibration pattern indicate rotor unbalance?",
+      "criteria": {
+        "true": "Dominant radial 1x (most of overall), low harmonics, low axial, H–V phase difference near 90 deg, H/V ratio roughly 1–3.",
+        "false": "Pattern not consistent with unbalance or better explained by another fault."
+      }
+    },
+    "unbalance_type": {
+      "type": "choice",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. Which type of unbalance best matches the phase relationship between the bearings?",
+      "criteria": {
+        "static": "Bearings vibrate in phase (DE–NDE phase difference near 0 deg); couple component C small relative to static S (C/S below threshold).",
+        "couple": "Bearings vibrate in antiphase (DE–NDE phase difference near 180 deg); static component S small relative to couple C.",
+        "dynamic": "Combination of static and couple: DE–NDE phase difference clearly between 0 and 180 deg; both S and C significant (C/S above threshold).",
+        "overhung": "Overhung rotor: high axial 1x in phase at both bearings, radial phase pattern irregular.",
+        "none": "No unbalance is present."
+      }
+    },
+    "alt_misalignment": {
+      "type": "noul",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. Is misalignment a more likely explanation (high 2x relative to 1x, high axial, ~180 deg across the coupling)?"
+    },
+    "alt_looseness_or_weakness": {
+      "type": "noul",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. Is mechanical looseness or structural weakness more likely (very high H/V ratio above ~3, H–V phase near 0 or 180 deg, many harmonics)?"
+    },
+    "alt_resonance": {
+      "type": "noul",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. Is a structural resonance near running speed a plausible amplifier (strongly directional 1x, unstable phase, very high H/V ratio)?"
+    },
+    "balancing_planes": {
+      "type": "choice",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. If the rotor is balanced, how many correction planes are needed? Judge from the static/couple decomposition, its H/V phase consistency and the expected residual vibration after single-plane correction.",
+      "criteria": {
+        "one_plane": "Couple component negligible (C/S below threshold in both directions, phases consistent); single-plane correction leaves acceptable residual vibration.",
+        "two_planes": "Couple component significant (C/S above threshold) or single-plane correction would leave residual vibration above the target zone.",
+        "not_applicable": "Unbalance is not the problem, or phase data are inconsistent and cannot support a balancing decision."
+      }
+    },
+    "action": {
+      "type": "choice",
+      "instructions": "Use the 1x, 2x, 3x spectra in `bearings`, the ratios and H–V phase difference in `computed_indicators`, the phase between bearings in `phase_between_bearings`, the static/couple vector decomposition in `static_couple_decomposition` (S = (A_DE + A_NDE)/2, C = (A_DE − A_NDE)/2; ratio C/S below the couple threshold means the couple component is negligible), the ISO 20816-3 zone and `technician_notes`. What is the most appropriate next action?",
+      "criteria": {
+        "no_action": "Vibration acceptable (zone A/B) and no progressing trend.",
+        "clean_rotor_then_check": "Gradual rise with likely material build-up or wear on the rotor; clean first, then re-measure before balancing.",
+        "balance_single_plane": "Static unbalance on a narrow rotor; balance in one plane.",
+        "balance_two_planes": "Dynamic or couple unbalance; balance in two planes.",
+        "investigate_other_cause": "Pattern points to another fault; diagnose before balancing."
+      }
+    }
+  }
+}

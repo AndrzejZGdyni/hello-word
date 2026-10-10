@@ -1,0 +1,536 @@
+{
+  "model": "jev-latest",
+  "state": {
+    "machine": {
+      "description": "Wentylator spalin kotła, napęd przez sprzęgło kłowe",
+      "setup": "motor – jaw coupling (elastomer insert) – fan; fan rotor supported on both sides (between bearings); motor bearings: ball (NDE) and cylindrical roller (DE, coupling side); fan bearings: double-row spherical roller",
+      "speed_rpm": 750,
+      "running_speed_Hz": 12.5,
+      "power_kW": 400,
+      "iso_20816_3": {
+        "group": 1,
+        "foundation": "podatny",
+        "zone_limits_AB_BC_CD_mm_s": [
+          3.5,
+          7.1,
+          11
+        ]
+      }
+    },
+    "units": "vibration velocity mm/s RMS; phase in degrees; spectrum keys are multiples of running speed",
+    "measurement_points": {
+      "motor_NDE": {
+        "bearing_type": "ball bearing",
+        "spectrum_H_mm_s": {
+          "0.5x": 0.08,
+          "1x": 1.4,
+          "1.5x": 0.06,
+          "2x": 0.3,
+          "2.5x": 0.04,
+          "3x": 0.15,
+          "4x": 0.08,
+          "5x": 0.05,
+          "6x": 0.04,
+          "7x": 0.03,
+          "8x": 0.02,
+          "9x": 0.02,
+          "10x": 0.01
+        },
+        "spectrum_V_mm_s": {
+          "0.5x": 0.05,
+          "1x": 0.9,
+          "1.5x": 0.04,
+          "2x": 0.2,
+          "2.5x": 0.03,
+          "3x": 0.1,
+          "4x": 0.05,
+          "5x": 0.03,
+          "6x": 0.03,
+          "7x": 0.02,
+          "8x": 0.02,
+          "9x": 0.01,
+          "10x": 0.01
+        },
+        "axial_mm_s": {
+          "1x": 0.6,
+          "2x": 0.2
+        },
+        "overall_mm_s": {
+          "H": 1.7,
+          "V": 1.2,
+          "A": 0.7
+        },
+        "iso_20816_3_zone": "A",
+        "time_waveform": {
+          "kurtoza": 3.1,
+          "wspolczynnik_szczytu": 3.9
+        },
+        "noise_floor_mm_s": 0.04,
+        "phase_1x_repeated_measurements_deg": {
+          "H": [
+            112,
+            114,
+            111
+          ],
+          "V": [
+            205,
+            207,
+            204
+          ]
+        },
+        "computed_indicators": {
+          "horizontal": {
+            "harmonic_series_length": 2,
+            "half_orders_present_of_3": 0,
+            "ratio_half_order_to_1x": 0.06,
+            "ratio_2x_to_1x": 0.21,
+            "ratio_3x_to_1x": 0.11,
+            "ratio_harmonics_rms_to_1x": 0.25
+          },
+          "vertical": {
+            "harmonic_series_length": 2,
+            "half_orders_present_of_3": 0,
+            "ratio_half_order_to_1x": 0.06,
+            "ratio_2x_to_1x": 0.22,
+            "ratio_3x_to_1x": 0.11,
+            "ratio_harmonics_rms_to_1x": 0.26
+          },
+          "ratio_H_to_V_1x": 1.56,
+          "ratio_2x_to_1x_axial": 0.33,
+          "phase_1x_instability_std_deg": 1.25
+        },
+        "vertical_1x_across_joints": [
+          {
+            "stacja": "obudowa łożyska",
+            "amp": 0.9,
+            "faza": 205
+          },
+          {
+            "stacja": "podstawa łożyska",
+            "amp": 0.8,
+            "faza": 208
+          },
+          {
+            "stacja": "rama",
+            "amp": 0.7,
+            "faza": 211
+          },
+          {
+            "stacja": "fundament",
+            "amp": 0.4,
+            "faza": 215
+          }
+        ],
+        "joint_analysis": {
+          "max_phase_jump_deg": 4,
+          "at_joint": "rama → fundament",
+          "amplitude_foundation_to_bearing_housing": 0.44,
+          "structural_looseness_A_indicated": false
+        }
+      },
+      "motor_DE": {
+        "bearing_type": "cylindrical roller bearing",
+        "spectrum_H_mm_s": {
+          "0.5x": 0.08,
+          "1x": 1.6,
+          "1.5x": 0.07,
+          "2x": 0.5,
+          "2.5x": 0.05,
+          "3x": 0.2,
+          "4x": 0.1,
+          "5x": 0.06,
+          "6x": 0.05,
+          "7x": 0.03,
+          "8x": 0.02,
+          "9x": 0.02,
+          "10x": 0.01
+        },
+        "spectrum_V_mm_s": {
+          "0.5x": 0.05,
+          "1x": 1,
+          "1.5x": 0.04,
+          "2x": 0.3,
+          "2.5x": 0.03,
+          "3x": 0.12,
+          "4x": 0.06,
+          "5x": 0.04,
+          "6x": 0.03,
+          "7x": 0.02,
+          "8x": 0.02,
+          "9x": 0.01,
+          "10x": 0.01
+        },
+        "axial_mm_s": {
+          "1x": 0.8,
+          "2x": 0.4
+        },
+        "overall_mm_s": {
+          "H": 2,
+          "V": 1.3,
+          "A": 0.9
+        },
+        "iso_20816_3_zone": "A",
+        "time_waveform": {
+          "kurtoza": 3.2,
+          "wspolczynnik_szczytu": 4
+        },
+        "noise_floor_mm_s": 0.04,
+        "phase_1x_repeated_measurements_deg": {
+          "H": [
+            118,
+            121,
+            116
+          ],
+          "V": [
+            198,
+            201,
+            197
+          ]
+        },
+        "computed_indicators": {
+          "horizontal": {
+            "harmonic_series_length": 3,
+            "half_orders_present_of_3": 0,
+            "ratio_half_order_to_1x": 0.05,
+            "ratio_2x_to_1x": 0.31,
+            "ratio_3x_to_1x": 0.13,
+            "ratio_harmonics_rms_to_1x": 0.35
+          },
+          "vertical": {
+            "harmonic_series_length": 2,
+            "half_orders_present_of_3": 0,
+            "ratio_half_order_to_1x": 0.05,
+            "ratio_2x_to_1x": 0.3,
+            "ratio_3x_to_1x": 0.12,
+            "ratio_harmonics_rms_to_1x": 0.33
+          },
+          "ratio_H_to_V_1x": 1.6,
+          "ratio_2x_to_1x_axial": 0.5,
+          "phase_1x_instability_std_deg": 2.05
+        },
+        "vertical_1x_across_joints": [
+          {
+            "stacja": "obudowa łożyska",
+            "amp": 1,
+            "faza": 199
+          },
+          {
+            "stacja": "podstawa łożyska",
+            "amp": 0.9,
+            "faza": 202
+          },
+          {
+            "stacja": "rama",
+            "amp": 0.8,
+            "faza": 205
+          },
+          {
+            "stacja": "fundament",
+            "amp": 0.4,
+            "faza": 209
+          }
+        ],
+        "joint_analysis": {
+          "max_phase_jump_deg": 4,
+          "at_joint": "rama → fundament",
+          "amplitude_foundation_to_bearing_housing": 0.4,
+          "structural_looseness_A_indicated": false
+        }
+      },
+      "fan_DE": {
+        "bearing_type": "double-row spherical roller bearing (self-aligning)",
+        "spectrum_H_mm_s": {
+          "0.5x": 1.1,
+          "1x": 6,
+          "1.5x": 1.8,
+          "2x": 3.4,
+          "2.5x": 1.5,
+          "3x": 2.6,
+          "4x": 1.9,
+          "5x": 1.4,
+          "6x": 1.2,
+          "7x": 0.9,
+          "8x": 0.7,
+          "9x": 0.5,
+          "10x": 0.4
+        },
+        "spectrum_V_mm_s": {
+          "0.5x": 0.4,
+          "1x": 2.8,
+          "1.5x": 0.5,
+          "2x": 1.2,
+          "2.5x": 0.4,
+          "3x": 0.9,
+          "4x": 0.6,
+          "5x": 0.4,
+          "6x": 0.3,
+          "7x": 0.2,
+          "8x": 0.2,
+          "9x": 0.1,
+          "10x": 0.1
+        },
+        "axial_mm_s": {
+          "1x": 1.9,
+          "2x": 1.1
+        },
+        "overall_mm_s": {
+          "H": 8.5,
+          "V": 3.6,
+          "A": 2.4
+        },
+        "iso_20816_3_zone": "C",
+        "time_waveform": {
+          "kurtoza": 5.1,
+          "wspolczynnik_szczytu": 5.6
+        },
+        "noise_floor_mm_s": 0.35,
+        "phase_1x_repeated_measurements_deg": {
+          "H": [
+            64,
+            112,
+            31
+          ],
+          "V": [
+            160,
+            201,
+            128
+          ]
+        },
+        "computed_indicators": {
+          "horizontal": {
+            "harmonic_series_length": 8,
+            "half_orders_present_of_3": 3,
+            "ratio_half_order_to_1x": 0.3,
+            "ratio_2x_to_1x": 0.57,
+            "ratio_3x_to_1x": 0.43,
+            "ratio_harmonics_rms_to_1x": 0.87
+          },
+          "vertical": {
+            "harmonic_series_length": 6,
+            "half_orders_present_of_3": 3,
+            "ratio_half_order_to_1x": 0.18,
+            "ratio_2x_to_1x": 0.43,
+            "ratio_3x_to_1x": 0.32,
+            "ratio_harmonics_rms_to_1x": 0.61
+          },
+          "ratio_H_to_V_1x": 2.14,
+          "ratio_2x_to_1x_axial": 0.58,
+          "phase_1x_instability_std_deg": 34
+        },
+        "vertical_1x_across_joints": [
+          {
+            "stacja": "obudowa łożyska",
+            "amp": 2.8,
+            "faza": 163
+          },
+          {
+            "stacja": "podstawa łożyska",
+            "amp": 2.6,
+            "faza": 166
+          },
+          {
+            "stacja": "rama",
+            "amp": 2.1,
+            "faza": 170
+          },
+          {
+            "stacja": "fundament",
+            "amp": 0.6,
+            "faza": 176
+          }
+        ],
+        "joint_analysis": {
+          "max_phase_jump_deg": 6,
+          "at_joint": "rama → fundament",
+          "amplitude_foundation_to_bearing_housing": 0.21,
+          "structural_looseness_A_indicated": false
+        }
+      },
+      "fan_NDE": {
+        "bearing_type": "double-row spherical roller bearing (self-aligning)",
+        "spectrum_H_mm_s": {
+          "0.5x": 0.2,
+          "1x": 2.3,
+          "1.5x": 0.22,
+          "2x": 0.9,
+          "2.5x": 0.2,
+          "3x": 0.5,
+          "4x": 0.3,
+          "5x": 0.2,
+          "6x": 0.15,
+          "7x": 0.1,
+          "8x": 0.1,
+          "9x": 0.05,
+          "10x": 0.05
+        },
+        "spectrum_V_mm_s": {
+          "0.5x": 0.1,
+          "1x": 1.5,
+          "1.5x": 0.15,
+          "2x": 0.6,
+          "2.5x": 0.1,
+          "3x": 0.3,
+          "4x": 0.2,
+          "5x": 0.1,
+          "6x": 0.08,
+          "7x": 0.05,
+          "8x": 0.05,
+          "9x": 0.03,
+          "10x": 0.03
+        },
+        "axial_mm_s": {
+          "1x": 1,
+          "2x": 0.4
+        },
+        "overall_mm_s": {
+          "H": 2.8,
+          "V": 1.9,
+          "A": 1.1
+        },
+        "iso_20816_3_zone": "A",
+        "time_waveform": {
+          "kurtoza": 3.4,
+          "wspolczynnik_szczytu": 4.1
+        },
+        "noise_floor_mm_s": 0.06,
+        "phase_1x_repeated_measurements_deg": {
+          "H": [
+            248,
+            251,
+            246
+          ],
+          "V": [
+            252,
+            255,
+            250
+          ]
+        },
+        "computed_indicators": {
+          "horizontal": {
+            "harmonic_series_length": 4,
+            "half_orders_present_of_3": 0,
+            "ratio_half_order_to_1x": 0.1,
+            "ratio_2x_to_1x": 0.39,
+            "ratio_3x_to_1x": 0.22,
+            "ratio_harmonics_rms_to_1x": 0.48
+          },
+          "vertical": {
+            "harmonic_series_length": 4,
+            "half_orders_present_of_3": 0,
+            "ratio_half_order_to_1x": 0.1,
+            "ratio_2x_to_1x": 0.4,
+            "ratio_3x_to_1x": 0.2,
+            "ratio_harmonics_rms_to_1x": 0.48
+          },
+          "ratio_H_to_V_1x": 1.53,
+          "ratio_2x_to_1x_axial": 0.4,
+          "phase_1x_instability_std_deg": 2.05
+        },
+        "vertical_1x_across_joints": [
+          {
+            "stacja": "obudowa łożyska",
+            "amp": 1.5,
+            "faza": 252
+          },
+          {
+            "stacja": "podstawa łożyska",
+            "amp": 1.4,
+            "faza": 254
+          },
+          {
+            "stacja": "rama",
+            "amp": 1.2,
+            "faza": 257
+          },
+          {
+            "stacja": "fundament",
+            "amp": 0.5,
+            "faza": 261
+          }
+        ],
+        "joint_analysis": {
+          "max_phase_jump_deg": 4,
+          "at_joint": "rama → fundament",
+          "amplitude_foundation_to_bearing_housing": 0.33,
+          "structural_looseness_A_indicated": false
+        }
+      }
+    },
+    "phase_across_coupling_motor_DE_to_fan_DE": {
+      "phase_diff_1x_radial_H_deg": 50,
+      "phase_diff_1x_radial_V_deg": 36,
+      "note": "fan_DE phase is averaged from unstable repeated readings if phase_1x_instability_std_deg is high"
+    },
+    "technician_notes": "Temperatura obudowy łożyska wentylatora od strony sprzęgła 71 °C, od strony przeciwnej 62 °C. Obsługa zgłasza okresowe stuki. Łożysko wentylatora od strony sprzęgła wymieniano 18 miesięcy temu (osadzone na tulei zaciskowej). Obwiednia 2–10 kHz: brak prążków BPFO/BPFI/BSF/FTF, podwyższony poziom szerokopasmowy na tym łożysku. Wirnik wentylatora czyszczono 3 miesiące temu. Śruby kotwiące kontrolowano rok temu."
+  },
+  "questions": {
+    "looseness": {
+      "type": "noul",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Does the vibration pattern indicate mechanical looseness (loose or worn fit, loose mounting, structural weakness)?",
+      "criteria": {
+        "true": "Long series of integer harmonics of running speed (1x…8x or more), often with half-order components (0.5x, 1.5x, 2.5x), raised noise floor, unstable 1x phase between repeated measurements, and/or ~180 deg vertical 1x phase shift across a joint (foot, base plate, frame, foundation).",
+        "false": "Few harmonics, stable phase, no half-orders and no phase reversal across joints; pattern is better explained by another single fault."
+      }
+    },
+    "looseness_type": {
+      "type": "choice",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Which type of looseness best matches the pattern?",
+      "criteria": {
+        "structural_foundation": "Type A: weak or loose feet, base plate, frame or foundation; dominant 1x (sometimes 2x) in the loose direction, ~180 deg vertical 1x phase shift across the loose joint, no long harmonic series.",
+        "bearing_pedestal_or_frame": "Type B: loose pedestal or housing bolts, cracked frame or bearing support; 1x and 2x with a few harmonics, directional or unstable phase.",
+        "rotating_fit": "Type C: loose or worn fit of a bearing or rotating component – bearing ring or adapter sleeve loose in housing or on shaft, excessive bearing clearance, loose impeller hub; long series of harmonics, half-order components, raised noise floor, erratic phase.",
+        "none": "No looseness pattern."
+      }
+    },
+    "location": {
+      "type": "choice",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Where is the looseness located?",
+      "criteria": {
+        "motor_NDE": "Strongest looseness signature (longest harmonic series, half-order components, unstable phase) is at motor_NDE (ball bearing).",
+        "motor_DE": "Strongest looseness signature (longest harmonic series, half-order components, unstable phase) is at motor_DE (cylindrical roller bearing).",
+        "fan_DE": "Strongest looseness signature (longest harmonic series, half-order components, unstable phase) is at fan_DE (double-row spherical roller bearing (self-aligning)).",
+        "fan_NDE": "Strongest looseness signature (longest harmonic series, half-order components, unstable phase) is at fan_NDE (double-row spherical roller bearing (self-aligning)).",
+        "none": "No point shows a looseness signature."
+      }
+    },
+    "alt_misalignment_or_coupling_wear": {
+      "type": "noul",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Is misalignment or jaw-coupling wear/backlash a more likely main cause than looseness (high 2x relative to 1x, high axial vibration, ~180 deg 1x phase shift across the coupling, symptoms strongest at the coupling-side bearings of both machines)?"
+    },
+    "alt_bearing_defect": {
+      "type": "noul",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Is a rolling-bearing defect a more likely explanation (discrete bearing defect frequencies with harmonics and sidebands in the envelope spectrum; see `technician_notes`)?"
+    },
+    "alt_rotor_stator_rub": {
+      "type": "noul",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Is a rotor–stator rub (e.g. fan wheel against casing or inlet cone) a plausible cause (harmonics and half-orders with erratic amplitude)?"
+    },
+    "alt_unbalance": {
+      "type": "noul",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. Is unbalance (e.g. build-up on the fan wheel) the primary cause of the high vibration instead of looseness?"
+    },
+    "severity": {
+      "type": "score",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. How serious is the condition, considering vibration level, ISO zone, temperature and waveform?",
+      "criteria": [
+        "0 – No looseness signs.",
+        "1 – Slight: few harmonics, no half-orders, vibration in ISO zone A/B.",
+        "2 – Moderate: harmonic series with some half-order components or unstable phase, zone B/C; inspect at the next planned stop.",
+        "3 – Serious: long harmonic series with half-orders, raised noise floor, zone C, raised bearing temperature; inspect soon and limit operating time.",
+        "4 – Critical: zone D or impacting/truncated waveform, risk of component failure; stop and inspect."
+      ]
+    },
+    "action": {
+      "type": "choice",
+      "instructions": "Use the order spectra of all four points in `measurement_points` (including half-orders 0.5x, 1.5x, 2.5x), their `computed_indicators`, the repeated 1x phase readings, the vertical 1x amplitude/phase across joints (housing → pedestal → frame → foundation), the time-waveform indicators, the noise floor, the phase across the coupling and `technician_notes`. What is the most appropriate next action?",
+      "criteria": {
+        "continue_monitoring": "No looseness or only slight signs; keep the normal measurement interval.",
+        "tighten_and_check_mounting": "Check and torque foot, base plate and pedestal bolts, grouting and frame cracks; re-measure (types A and B).",
+        "inspect_bearing_seat_and_clearance": "Inspect bearing housing bore, shaft seat, adapter or withdrawal sleeve and lock nut, outer-ring creep; measure bearing radial clearance (type C).",
+        "inspect_coupling_and_alignment": "Check jaw-coupling insert wear and backlash and re-check alignment.",
+        "stop_and_inspect": "Stop the fan as soon as the process allows and inspect (critical condition).",
+        "investigate_other_cause": "Pattern points to another fault; diagnose before maintenance on mounting or bearings."
+      }
+    }
+  }
+}

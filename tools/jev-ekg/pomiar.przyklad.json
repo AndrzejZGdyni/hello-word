@@ -1,0 +1,53 @@
+{
+  "_uwaga": "DANE SYNTETYCZNE (wygenerowane) – nie pochodzą z żadnego zapisu. MATERIAŁ EDUKACYJNY, nie ocena medyczna. Format jak w skrypcie ecg_z_obrazu.py; wartości z nagłówka zakładane w ms.",
+  "pacjent": {
+    "plec": null,
+    "wiek": null
+  },
+  "naglowek_raportu": {
+    "tetno_bpm": 60,
+    "qrs_ms": 92,
+    "pr_ms": 160,
+    "qtc_ms": 410
+  },
+  "zapis": {
+    "czas_s": 30,
+    "liczba_odprowadzen": 1,
+    "rozdzielczosc_czasowa_ms": 10.2,
+    "skala_amplitudy": "nieznana (brak kalibracji w mV)"
+  },
+  "zalamki_R_s": [
+    0.6,
+    1.59,
+    2.57,
+    3.58,
+    4.55,
+    5.55,
+    6.55,
+    7.52,
+    8.52,
+    9.49,
+    10.49,
+    11.46,
+    12.44,
+    13.43,
+    14.45,
+    15.43,
+    16.41,
+    17.42,
+    18.45,
+    19.45,
+    20.45,
+    21.48,
+    22.45,
+    23.47,
+    24.46,
+    25.44,
+    26.41,
+    27.4,
+    28.42,
+    29.4
+  ],
+  "niepewne_krawedziowe_s": [],
+  "amplituda_R_cv_proc": 10.0
+}
