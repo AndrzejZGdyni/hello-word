@@ -33,6 +33,6 @@ TYPESAFE_API_KEY=<klucz> node klasyfikacja_iso20816.mjs wejscie.przyklad.json
 ## Ograniczenia
 
 1. Granice stref pochodzą ze źródeł wtórnych i **wymagają potwierdzenia w tekście normy** przed użyciem do ustalania alarmów.
-2. Pompy wirnikowe nie podlegają ISO 20816-3, lecz ISO 10816-7 (wg opisów normy w źródłach wtórnych, do potwierdzenia w tekście normy). Skrypt rozpoznaje pompę i informuje o tym, ale nie zawiera tabeli granic ISO 10816-7. Silnik napędowy opisuje się osobno.
+2. Pompy wirnikowe nie podlegają ISO 20816-3, lecz ISO 10816-7. Turbiny parowe i generatory o mocy > 40 MW przy 1500/1800/3000/3600 obr/min podlegają ISO 20816-2, a pozostałe (≤ 40 MW lub inne prędkości) ISO 20816-3 (wg źródeł wtórnych, do potwierdzenia w tekście norm; liczba 50 MW pochodzi ze starszych wydań). Skrypt rozpoznaje takie przypadki (także turbiny gazowe i zespoły wodne wg części 4 i 5, bez weryfikacji ich zakresu) i informuje o właściwej normie, ale nie zawiera ich tabel granic. Silnik napędowy opisuje się osobno.
 3. Oceniana jest wyłącznie wartość ogólna drgań, bez analizy widma i przyczyn.
 4. Dane w repozytorium są syntetyczne. Nie umieszczaj tu rzeczywistych pomiarów zakładowych.
