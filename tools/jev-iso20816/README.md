@@ -19,7 +19,7 @@ Jev nie podaje wartości granicznych. Pochodzą one z tabeli w kodzie.
 | `wysokosc_osi_silnika_mm` | grupa 1 (≥ 315 mm) lub 2 (160–315 mm) |
 | `obroty_rpm` | zakres normy, kryterium fundamentu |
 | `czestosc_wlasna_ukladu_Hz` | jeśli podana: fundament sztywny, gdy ≥ 1,25 × częstość obrotowa |
-| `opis_tekstowy`, `opis_fundamentu` | interpretuje Jev |
+| `opis_tekstowy`, `opis_fundamentu` | interpretuje Jev (opis dotyczy jednej maszyny: silnika, wentylatora itd.; pompa zostanie wskazana jako ISO 10816-7) |
 | `punkty` | prędkość drgań v_RMS [mm/s] w punktach pomiarowych |
 
 ## Uruchomienie
@@ -33,6 +33,6 @@ TYPESAFE_API_KEY=<klucz> node klasyfikacja_iso20816.mjs wejscie.przyklad.json
 ## Ograniczenia
 
 1. Granice stref pochodzą ze źródeł wtórnych i **wymagają potwierdzenia w tekście normy** przed użyciem do ustalania alarmów.
-2. Dla pomp może obowiązywać ISO 10816-7 zamiast części 3. Do sprawdzenia, nie rozstrzygnięte w skrypcie.
+2. Pompy wirnikowe nie podlegają ISO 20816-3, lecz ISO 10816-7 (wg opisów normy w źródłach wtórnych, do potwierdzenia w tekście normy). Skrypt rozpoznaje pompę i informuje o tym, ale nie zawiera tabeli granic ISO 10816-7. Silnik napędowy opisuje się osobno.
 3. Oceniana jest wyłącznie wartość ogólna drgań, bez analizy widma i przyczyn.
 4. Dane w repozytorium są syntetyczne. Nie umieszczaj tu rzeczywistych pomiarów zakładowych.

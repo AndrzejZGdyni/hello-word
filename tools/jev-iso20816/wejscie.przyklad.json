@@ -1,7 +1,7 @@
 {
   "_uwaga": "DANE PRZYKŁADOWE (syntetyczne). Wartości graniczne ISO 20816-3 są w kodzie, nie w tym pliku.",
   "maszyna": {
-    "opis_tekstowy": "Centrifugal process pump with a separate 55 kW electric motor driving it through a flexible coupling; rolling-element bearings.",
+    "opis_tekstowy": "55 kW three-phase induction motor driving a centrifugal pump through a flexible coupling; rolling-element bearings.",
     "moc_kW": 55,
     "wysokosc_osi_silnika_mm": 250,
     "obroty_rpm": 2980,
@@ -10,7 +10,6 @@
   },
   "punkty": {
     "motor_DE": { "v_rms_mm_s": 7.1, "kierunek": "H" },
-    "motor_NDE": { "v_rms_mm_s": 5.2, "kierunek": "H" },
-    "pompa_DE": { "v_rms_mm_s": 3.0, "kierunek": "H" }
+    "motor_NDE": { "v_rms_mm_s": 5.2, "kierunek": "H" }
   }
 }

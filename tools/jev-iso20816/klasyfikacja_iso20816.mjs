@@ -24,7 +24,8 @@ const questions = {
     type: "choice",
     instructions: "Which part of the ISO 20816 series is the natural choice for judging overall vibration of this machine?",
     criteria: {
-      part3_industrial: "Industrial machine above 15 kW and 120-15000 rpm: electric motor, pump with separate driver, fan, compressor, steam turbine up to 50 MW.",
+      part3_industrial: "Industrial machine above 15 kW and 120-30000 rpm judged by in-situ measurements on bearings or housings: electric motor or generator (also the motor that drives a pump), fan or blower, compressor, steam turbine up to 50 MW. Rotodynamic pumps are NOT in this part.",
+      pump_part7: "Rotodynamic pump (centrifugal, mixed-flow or axial) for industrial use above 1 kW, including boiler feed pumps: the pump itself is judged by ISO 10816-7. A flexibly coupled driver is judged separately.",
       part2_large_steam: "Land-based steam turbine or generator above 50 MW at 1500/1800/3000/3600 rpm.",
       part4_gas_turbine: "Gas turbine set with fluid-film bearings.",
       part5_hydro_pumping: "Machine set in a hydraulic power plant or a pumping plant.",
@@ -66,6 +67,11 @@ if (m.czestosc_wlasna_ukladu_Hz != null) {
 }
 
 console.log(`Model: ${model}`);
+if (answers.scope.choice === "pump_part7") {
+  console.log("➜ Opisana maszyna to pompa wirnikowa: ocenia się ją wg ISO 10816-7, a nie ISO 20816-3.");
+  console.log("  Tabela granic ISO 10816-7 nie jest zaimplementowana. Silnik napędowy opisz osobno (typ: silnik).");
+  process.exit(0);
+}
 console.log(`Zakres normy wg Jev: ${answers.scope.choice} (pewność ${r2(answers.scope.confidence)})`);
 console.log(`Grupa: ${grupa ?? "—"} (${powodGrupy})`);
 console.log(`Fundament: ${fund ?? "NIEJEDNOZNACZNY"} (${powodFund})`);
