@@ -12,6 +12,7 @@ Skrypty Node.js, w których kod oblicza wskaźniki z pomiarów, a model **Jev** 
 | `jev-lozysko` | uszkodzenia łożysk tocznych (BPFO, BPFI, BSF, FTF) |
 | `jev-niewywazenie` | niewyważenie, rozkład składowych statycznej i momentowej, liczba płaszczyzn korekcji |
 | `jev-luzy` | luzy mechaniczne (typy A/B/C), lokalizacja i pilność |
+| `jev-iso20816` | klasyfikacja maszyny i strefy drgań A/B/C/D wg ISO 20816-3 |
 | `jev-ekg` | ćwiczenie na zapisie EKG, **nie jest narzędziem medycznym** |
 
 Zbiorcze wyniki z danych przykładowych: [`tools/raport-zbiorczy.md`](tools/raport-zbiorczy.md).
