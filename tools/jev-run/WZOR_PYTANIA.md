@@ -1,7 +1,7 @@
 # Wzór zapytania do Jev – sytuacja w rejonie Cieśniny Ormuz
 
 Szablon do cyklicznej oceny raportów sytuacyjnych narzędziem `jev_run.py`.
-Opracowany na podstawie przebiegu z 26.10.2026 (`jev-1.14.0`).
+Opracowany na podstawie przebiegów z 26.10.2026 (`jev-1.14.0`, wersje v1–v4).
 
 ## 1. Zasada działania
 
@@ -22,15 +22,34 @@ potrzebne do odpowiedzi na pytania:
 | Element | Przykład | Uwagi |
 |---|---|---|
 | Data i pora stanu | „Stan na 26.10.2026 rano.” | Zawsze na początku |
-| Ataki na żeglugę | liczba ataków w miesiącu, uszkodzone VLCC | Podawaj liczby, nie oceny |
+| Ataki na żeglugę | liczba ataków w miesiącu i od początku wojny, uszkodzone VLCC | **Wymagane** dla `supply_stress_level`; podawaj liczby, nie oceny |
+| Koszty frachtu i ubezpieczeń | War Risk Premium, stawki frachtu | **Wymagane** dla `supply_stress_level` (sekcja 7) |
 | Miny | „doniesienia o minach” / „miny potwierdzone przez …” | **Odróżniaj doniesienia od potwierdzeń** |
 | Przepływy ropy | eksport w mln bbl/d i punkt odniesienia sprzed wojny | Bez punktu odniesienia pytanie o spadek przepływów jest nierozstrzygalne |
 | Infrastruktura lądowa | deklaracje stron i to, czy je potwierdzono | Zawsze pisz, kto deklaruje, a kto potwierdza |
 | Dyplomacja | mediacje, ultimata, oficjalne zapowiedzi | Cytuj oficjalne komunikaty, jeśli są |
 | Rynek | Brent/WTI, fracht, ubezpieczenia | Opcjonalnie; nie jest wejściem do reguły TRIP |
 
+Przy każdej liczbie podawaj źródło („według IMO”, „według danych Kpler”). Fakty oddzielaj
+od deklaracji stron: kto deklaruje, kto potwierdza, kto zaprzecza.
+
 Czego nie dodawać: komentarzy publicystycznych, własnych ocen („sytuacja jest groźna”),
+gotowych wniosków odpowiadających wprost na pytania („tranzyt nie został wstrzymany”),
 pól bez związku z pytaniami, pustych sekcji. Mogą przesunąć odpowiedzi.
+
+Przykładowy `state` (wersja v4 z 26.10.2026, wzorcowa):
+
+> Stan na 26.10.2026 rano. Według danych Washington Institute w październiku odnotowano
+> 28 ataków na statki handlowe (113 od 28 lutego), a według IMO w październiku uszkodzono
+> 11 supertankowców VLCC (ponad 30 od początku wojny). Według danych Kpler średni eksport
+> ropy z Bliskiego Wschodu wynosi ponad 24 mln bbl/d wobec przedwojennego poziomu
+> 23,3 mln bbl/d. Ruch Huti zadeklarował uderzenia na saudyjski obiekt Aramco w Yanbu,
+> rafinerię Rabigh oraz rurociąg East-West; Arabia Saudyjska nie potwierdziła tych
+> doniesień. W oficjalnych komunikatach wojskowych brak potwierdzenia postawienia min
+> morskich oraz brak oficjalnych zapowiedzi Iranu o zamknięciu Cieśniny Ormuz. Stawki
+> ubezpieczeń od ryzyka wojennego (War Risk Premium) oraz koszty frachtu wzrosły,
+> natomiast w Teheranie rozpoczęły się rozmowy z mediatorami z Kataru, a notowania WTI
+> na otwarciu sesji spadły z 103,27 USD do 101,65 USD.
 
 ## 3. Pytania (JSON do skopiowania)
 
@@ -126,24 +145,44 @@ Dziennik `jev_log.jsonl` jest wykluczony z repozytorium (`.gitignore`).
 ## 6. Lista kontrolna przed wysłaniem
 
 - [ ] `state` ma datę i porę stanu.
+- [ ] Podana liczba ataków oraz informacja o kosztach frachtu i ubezpieczeń.
+- [ ] Przy każdej liczbie podane źródło.
 - [ ] Przepływy podane razem z punktem odniesienia sprzed wojny.
 - [ ] Przy każdym incydencie widać, czy to doniesienie, deklaracja czy potwierdzenie.
 - [ ] Brak własnych ocen i komentarzy w `state`.
 - [ ] Brzmienie pytań niezmienione (porównywalność w dzienniku).
 - [ ] `--dry-run` zwraca „Walidacja OK.”.
 
-## 7. Wynik odniesienia (26.10.2026 rano, `jev-1.14.0`)
+## 7. Wyniki odniesienia i test stabilności (26.10.2026, `jev-1.14.0`)
 
-| Pytanie | Wynik |
+Cztery wersje `state` opisujące ten sam stan faktyczny, przy tych samych pytaniach
+(`questions_sha256 = 71917c473bbd246d`):
+
+| Wersja | Charakterystyka `state` |
 |---|---|
-| `immediate_closure_probability` | 0,07 |
-| `hormuz_transit_halted` | 0,06 |
-| `mines_confirmed` | 0,07 |
-| `saudi_infrastructure_hit_confirmed` | 0,05 |
-| `supply_stress_level` | 2,0 (p = 0,99 dla poziomu 2) |
+| v1 | Pierwotny raport: 28 ataków, „doniesienia o minach”, ceny Brent i WTI |
+| v2 | Gotowe wnioski („tranzyt nie został wstrzymany”); **brak** liczby ataków i kosztów ubezpieczeń |
+| v3 | Przywrócone: 28 ataków (rekord), wzrost War Risk Premium, szczyty Brent |
+| v4 | Jak v3, plus źródło przy każdej liczbie i sumy od początku wojny (**wzorcowa**, sekcja 2) |
 
-Reguła z sekcji 4: **OK**. Raport opisywał nasilone ataki przy utrzymanych przepływach
-(ok. 24 mln bbl/d wobec przedwojennych 23,3).
+| Pytanie | v1 | v2 | v3 | v4 |
+|---|---|---|---|---|
+| `immediate_closure_probability` | 0,07 | 0,04 | 0,05 | 0,04 |
+| `hormuz_transit_halted` | 0,06 | 0,04 | 0,07 | 0,05 |
+| `mines_confirmed` | 0,07 | 0,04 | 0,05 | 0,05 |
+| `saudi_infrastructure_hit_confirmed` | 0,05 | 0,05 | 0,07 | 0,05 |
+| `supply_stress_level` | 2,0 (p₂ = 0,99) | **1,58** (p₁ = 0,42, p₂ = 0,58) | 2,0 (p₂ = 1,00) | 2,0 (p₂ = 1,00) |
+
+Wnioski:
+
+- Pytania tak/nie są stabilne: różne wersje tekstu dają wyniki 0,04–0,07, daleko poniżej
+  progu 0,3. Różnice rzędu ±0,03 to zwykłe wahania, nie zmiana oceny.
+- W v2 `supply_stress_level` ma dwa maksima, bo poziom 2 wymaga regularnych ataków
+  i rosnących kosztów, a `state` tego nie podawał. Po uzupełnieniu danych (v3, v4) rozkład
+  wraca do jednego maksimum. **Brakujące dane uzupełnia się w `state`, nie w pytaniu.**
+- Wszystkie wersje: reguła z sekcji 4 daje **OK**. Raport opisywał nasilone ataki przy
+  utrzymanych przepływach (ok. 24 mln bbl/d wobec przedwojennych 23,3).
+- Liczby i przypisane im źródła pochodzą z raportu wejściowego; nie były weryfikowane.
 
 > Narzędzie ma charakter analityczny i edukacyjny. Wynik wspiera ocenę sytuacji,
 > nie zastępuje analizy eksperckiej ani oficjalnych komunikatów.
