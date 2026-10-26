@@ -6,13 +6,17 @@ do dziennika JSONL i sygnalizuje przekroczenie progu decyzyjnego.
 Użycie:
     python jev_run.py jev_hormuz_2026-10-26.json
     python jev_run.py payload.json --dry-run        # walidacja bez wysyłki
-    python jev_run.py payload.json --threshold 0.9 --log jev_log.jsonl
+    python jev_run.py payload.json --yes 0.7 --no 0.3 --log jev_log.jsonl
 
 Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key.
 Endpoint i autoryzacja zgodne z https://api.typesafe.ai/openapi.json
 (POST /v1/systemone, nagłówek "Authorization: Bearer <klucz>").
 
-Kody wyjścia: 0 — OK, 1 — błąd (walidacja, sieć, HTTP), 2 — TRIP (p >= próg).
+Decyzję podejmuje tabela decyzyjna (decide) na podstawie trzech pytań typu noul;
+opis w WZOR_PYTANIA.md, sekcja 4.
+
+Kody wyjścia: 0 — OK, 1 — błąd (walidacja, sieć, HTTP), 2 — TRIP, 3 — ALERT,
+4 — SPRAWDŹ (odpowiedź nierozstrzygnięta lub brakująca).
 """
 
 import argparse
@@ -29,9 +33,15 @@ import requests
 API_URL = os.environ.get("TYPESAFE_URL", "https://api.typesafe.ai/v1/systemone")
 AUTH_HEADER = "Authorization"
 AUTH_PREFIX = "Bearer "
-TRIP_KEY = "immediate_closure_probability"
 TZ = ZoneInfo("Europe/Warsaw")
-EXIT_TRIP = 2
+
+# Pytania wejściowe tabeli decyzyjnej (WZOR_PYTANIA.md, sekcja 4).
+HALTED_KEY = "hormuz_transit_halted"
+CLOSURE_KEY = "immediate_closure_probability"
+MINES_KEY = "mines_confirmed"
+DECISION_KEYS = (HALTED_KEY, CLOSURE_KEY, MINES_KEY)
+
+EXIT_CODES = {"OK": 0, "TRIP": 2, "ALERT": 3, "SPRAWDŹ": 4}
 
 
 def load_key() -> str:
@@ -80,9 +90,12 @@ def validate(payload: dict) -> None:
                 crit = q.get("criteria")
                 if not isinstance(crit, dict) or not crit:
                     errors.append(f"{name}: 'criteria' musi być słownikiem opcji")
-        trip_q = questions.get(TRIP_KEY)
-        if trip_q is not None and trip_q.get("type") != "noul":
-            errors.append(f"{TRIP_KEY}: pytanie progowe musi być typu 'noul'")
+        for key in DECISION_KEYS:
+            q = questions.get(key)
+            if q is None:
+                errors.append(f"{key}: brak pytania wymaganego przez tabelę decyzyjną")
+            elif q.get("type") != "noul":
+                errors.append(f"{key}: pytanie decyzyjne musi być typu 'noul'")
     if errors:
         sys.exit("Błędy walidacji:\n  - " + "\n  - ".join(errors))
 
@@ -107,7 +120,35 @@ def extract_answers(resp: dict) -> dict:
     return out
 
 
-def last_value(log: Path, key: str):
+def classify(p, yes: float, no: float) -> str:
+    """Noul -> 'tak' / 'nie' / 'nierozstrzygnięte' (brak odpowiedzi też)."""
+    if p is None:
+        return "nierozstrzygnięte"
+    if p >= yes:
+        return "tak"
+    if p <= no:
+        return "nie"
+    return "nierozstrzygnięte"
+
+
+def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
+    """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca."""
+    v = {k: classify(answers.get(k, {}).get("noul"), yes, no) for k in DECISION_KEYS}
+    halted, closure, mines = v[HALTED_KEY], v[CLOSURE_KEY], v[MINES_KEY]
+    if halted == "tak":
+        return "TRIP", "tranzyt wstrzymany", v
+    if halted == "nie" and closure == "tak" and mines == "tak":
+        return "TRIP", "zamknięcie zapowiedziane i wsparte minami", v
+    if halted == "nie" and closure == "tak":
+        return "ALERT", "zapowiedź zamknięcia bez potwierdzenia min", v
+    if halted == "nie" and closure == "nie" and mines == "tak":
+        return "ALERT", "miny potwierdzone, brak zapowiedzi zamknięcia", v
+    if "nierozstrzygnięte" in v.values():
+        return "SPRAWDŹ", "odpowiedź nierozstrzygnięta lub brakująca; uzupełnij state", v
+    return "OK", "brak przesłanek zamknięcia", v
+
+
+def last_decision(log: Path):
     if not log.exists():
         return None
     for line in reversed(log.read_text(encoding="utf-8").splitlines()):
@@ -115,9 +156,9 @@ def last_value(log: Path, key: str):
             rec = json.loads(line)
         except json.JSONDecodeError:
             continue
-        val = rec.get("answers", {}).get(key, {}).get("noul")
-        if val is not None:
-            return val, rec.get("timestamp")
+        dec = rec.get("decision", {}).get("result")
+        if dec is not None:
+            return dec, rec.get("timestamp")
     return None
 
 
@@ -125,9 +166,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("payload")
     ap.add_argument("--log", default="jev_log.jsonl")
-    ap.add_argument("--threshold", type=float, default=0.90)
+    ap.add_argument("--yes", type=float, default=0.7, help="próg 'tak' dla noul")
+    ap.add_argument("--no", type=float, default=0.3, help="próg 'nie' dla noul")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    if not (0 <= args.no < args.yes <= 1):
+        sys.exit("Progi muszą spełniać 0 <= --no < --yes <= 1")
 
     payload = json.loads(Path(args.payload).read_text(encoding="utf-8"))
     payload.setdefault("model", "jev-latest")
@@ -151,7 +195,8 @@ def main() -> None:
     answers = extract_answers(resp)
 
     log = Path(args.log)
-    prev = last_value(log, TRIP_KEY)
+    prev = last_decision(log)
+    result, reason, inputs = decide(answers, args.yes, args.no)
     record = {
         "timestamp": datetime.now(TZ).isoformat(timespec="seconds"),
         "model": resp.get("model", payload["model"]),
@@ -161,6 +206,8 @@ def main() -> None:
         "questions_sha256": hashlib.sha256(
             json.dumps(payload["questions"], sort_keys=True).encode()).hexdigest()[:16],
         "answers": answers,
+        "decision": {"result": result, "reason": reason, "inputs": inputs,
+                     "thresholds": {"yes": args.yes, "no": args.no}},
         "usage": resp.get("usage"),
         "raw": resp,
     }
@@ -171,18 +218,14 @@ def main() -> None:
     for name, a in answers.items():
         print(f"  {name}: {a}")
 
-    tripped = False
-    trip = answers.get(TRIP_KEY, {}).get("noul")
-    if trip is not None:
-        if prev:
-            print(f"\n{TRIP_KEY}: {trip:.3f} (poprzednio {prev[0]:.3f}, {prev[1]})")
-        tripped = trip >= args.threshold
-        print(f"Próg p>={args.threshold:.2f}: {'TRIP' if tripped else 'OK'}")
-    elif TRIP_KEY in payload["questions"]:
-        print(f"\nUWAGA: brak odpowiedzi '{TRIP_KEY}' w wyniku")
+    print(f"\nTabela decyzyjna (tak >= {args.yes:.2f}, nie <= {args.no:.2f}):")
+    for key, val in inputs.items():
+        print(f"  {key}: {val}")
+    print(f"Wynik: {result} – {reason}")
+    if prev:
+        print(f"Poprzednio: {prev[0]} ({prev[1]})")
     print(f"\nZapisano do {log}")
-    if tripped:
-        sys.exit(EXIT_TRIP)
+    sys.exit(EXIT_CODES[result])
 
 
 if __name__ == "__main__":

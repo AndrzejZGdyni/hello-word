@@ -119,7 +119,7 @@ Progi dla `noul`: **≥ 0,7 = tak**, **≤ 0,3 = nie**, **0,3–0,7 = nierozstrz
 | nie | tak | tak | **TRIP** – zamknięcie zapowiedziane i wsparte minami |
 | nie | tak | nie / nierozstrzygnięte | **ALERT** – zapowiedź bez potwierdzenia; ponów ocenę przy następnym raporcie |
 | nie | nie | tak | **ALERT** – miny potwierdzone, brak zapowiedzi zamknięcia |
-| nierozstrzygnięte w którejkolwiek kolumnie | | | **SPRAWDŹ** – uzupełnij źródła i powtórz |
+| inne połączenie z odpowiedzią nierozstrzygniętą lub brakującą | | | **SPRAWDŹ** – uzupełnij źródła i powtórz |
 | nie | nie | nie | **OK** |
 
 Wskaźniki pomocnicze (nie wchodzą do reguły TRIP, pokazują trend):
@@ -128,8 +128,10 @@ Wskaźniki pomocnicze (nie wchodzą do reguły TRIP, pokazują trend):
 - `supply_stress_level` – odczytuj **rozkład `probabilities`**, nie tylko średnią `score`;
   dwa maksima (np. na poziomach 2 i 4) oznaczają raport niespójny lub dwuznaczny.
 
-Uwaga: obecna wersja `jev_run.py` sprawdza tylko `immediate_closure_probability ≥ --threshold`.
-Pełna tabela powyżej wymaga rozbudowy skryptu albo ręcznego odczytu wyników.
+Tabelę realizuje funkcja `decide()` w `jev_run.py`. Wiersze są sprawdzane od góry
+i wygrywa pierwszy pasujący, więc np. zapowiedź zamknięcia przy nierozstrzygniętych
+minach daje ALERT, a nie SPRAWDŹ. Wynik, uzasadnienie i sklasyfikowane wejścia trafiają
+do dziennika w polu `decision`. Progi zmienia się opcjami `--yes` i `--no`.
 
 ## 5. Uruchomienie
 
@@ -137,9 +139,12 @@ Pełna tabela powyżej wymaga rozbudowy skryptu albo ręcznego odczytu wyników.
 cd tools/jev-run
 python jev_run.py jev_hormuz_RRRR-MM-DD.json --dry-run   # walidacja
 TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --log jev_log.jsonl
+# progi inne niż domyślne 0,7 / 0,3:
+TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --yes 0.8 --no 0.2
 ```
 
-Kody wyjścia: `0` – OK, `1` – błąd (walidacja, sieć, HTTP), `2` – TRIP.
+Kody wyjścia: `0` – OK, `1` – błąd (walidacja, sieć, HTTP), `2` – TRIP, `3` – ALERT,
+`4` – SPRAWDŹ. Walidacja odrzuca payload bez któregoś z trzech pytań decyzyjnych.
 Dziennik `jev_log.jsonl` jest wykluczony z repozytorium (`.gitignore`).
 
 ## 6. Lista kontrolna przed wysłaniem
