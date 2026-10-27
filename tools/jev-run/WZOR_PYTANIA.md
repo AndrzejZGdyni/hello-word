@@ -69,7 +69,7 @@ obecny zestaw: `1780910a27e1a438`).
 | `formal_closure_steps` | noul | decyzyjne | czy organy Iranu podjęły formalne kroki ku zamknięciu bez wiążącej decyzji |
 | `saudi_infrastructure_hit_confirmed` | noul | pomocnicze | czy uszkodzenie lądowej infrastruktury saudyjskiej jest potwierdzone |
 | `shipping_disruption_level` | score 0–4 | pomocnicze | zakłócenie żeglugi i przepływu przez cieśninę |
-| `production_loss_level` | score 0–4 | pomocnicze | utrata mocy wydobywczych lub przetwórczych w państwach Zatoki |
+| `production_loss_level` | score 0–4 | decyzyjne (poziom dominujący) | utrata mocy wydobywczych lub przetwórczych w państwach Zatoki |
 
 Wcześniejsza skala `supply_stress_level` łączyła na poziomie 4 wstrzymanie tranzytu
 z utratą wydobycia i dawała rozkład z dwoma maksimami, gdy tylko jedno z nich zachodziło
@@ -90,8 +90,14 @@ Wiersze są sprawdzane od góry; wygrywa pierwszy pasujący.
 | 4 | halted = nie, closure = nie, mines = tak | **ALERT** – miny potwierdzone, brak zapowiedzi |
 | 5 | halted = nie, `flow_drop_significant` = tak | **ALERT** – wyraźny spadek przepływów bez wstrzymania |
 | 6 | halted = nie, closure = nie, `formal_closure_steps` = tak | **ALERT** – formalne kroki ku zamknięciu bez decyzji |
-| 7 | którakolwiek odpowiedź decyzyjna nierozstrzygnięta lub brakująca | **SPRAWDŹ** – uzupełnij źródła i powtórz |
-| 8 | pozostałe (wszystkie decyzyjne = nie) | **OK** |
+| 7 | dominujący poziom `production_loss_level` ≥ 3 (utrata ≥ ok. 1 mln bbl/d) | **ALERT** – duża utrata mocy wydobywczych lub przetwórczych |
+| 8 | którakolwiek odpowiedź noul decyzyjna nierozstrzygnięta lub brakująca | **SPRAWDŹ** – uzupełnij źródła i powtórz |
+| 9 | pozostałe | **OK** |
+
+Reguła 7 rozszerza zakres narzędzia poza samą cieśninę: duża utrata mocy w państwach
+Zatoki zagraża dostawom także przy normalnym tranzycie. Poziom dominujący to poziom
+o najwyższym prawdopodobieństwie w `probabilities`, nie średnia `score`. Próg ustawia
+stała `PRODUCTION_ALERT_LEVEL` w `jev_run.py`.
 
 Dziennik zapisuje tylko pierwszy pasujący powód. Gdy ALERT ma kilka przyczyn (np. W4:
 spadek przepływów i formalne kroki), pozostałe widać w polu `decision.inputs`.
@@ -99,7 +105,7 @@ spadek przepływów i formalne kroki), pozostałe widać w polu `decision.inputs
 Wskaźniki pomocnicze (nie wchodzą do tabeli, pokazują tło i trend):
 
 - `saudi_infrastructure_hit_confirmed` – sygnał rozszerzenia konfliktu na lądzie,
-- `shipping_disruption_level` i `production_loss_level` – odczytuj **rozkład
+- `shipping_disruption_level` (oraz `production_loss_level` poza regułą 7) – odczytuj **rozkład
   `probabilities`**, nie średnią `score`. Dwa maksima oznaczają raport niespójny lub
   dwuznaczny; średnia leży wtedy między nimi i nie odpowiada żadnemu opisowi.
 
@@ -117,7 +123,8 @@ TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --yes 0.8 
 ```
 
 Kody wyjścia: `0` – OK, `1` – błąd (walidacja, sieć, HTTP), `2` – TRIP, `3` – ALERT,
-`4` – SPRAWDŹ. Walidacja odrzuca payload bez któregoś z pięciu pytań decyzyjnych.
+`4` – SPRAWDŹ. Walidacja odrzuca payload bez któregoś z pięciu pytań decyzyjnych noul
+lub bez skali `production_loss_level`.
 Dziennik `jev_log.jsonl` jest wykluczony z repozytorium (`.gitignore`).
 
 Test wariancji (warianty V4 i W1–W4, po 5 przebiegów, ok. 25 zapytań):
@@ -181,7 +188,7 @@ jako kontrola regresji. Skrypt: `jev_variance_test.py`.
 | V4 | stan wzorcowy z 26.10 | OK |
 | W1 | wybuch miny potwierdzony przez US 5th Fleet, przepływ 17 / 20,5 mln bbl/d | ALERT |
 | W2 | przepływ 12,3 / 20,5 mln bbl/d, część armatorów wstrzymała rejsy | ALERT |
-| W3 | Aramco potwierdza uszkodzenie Abqaiq (−5 mln bbl/d), tranzyt w normie | patrz wnioski |
+| W3 | Aramco potwierdza uszkodzenie Abqaiq (−5 mln bbl/d), tranzyt w normie | ALERT (reguła 7) |
 | W4 | rezolucja parlamentu Iranu bez decyzji Rady, obiekt na torze niepotwierdzony, przepływ −15% | ALERT |
 
 **Przebieg 1 – poprzedni zestaw pytań** (`71917c473bbd246d`, 20 przebiegów):
@@ -200,7 +207,7 @@ jako kontrola regresji. Skrypt: `jev_variance_test.py`.
 | V4 | 0,05 | 0,04 | 0,05 | 0,05 | 0,06–0,07 | 0,05 | 2 (p = 1,00) | 0 (p ≥ 0,99) | OK ×5 |
 | W1 | 0,06 | 0,10–0,11 | **0,94–0,95** | **0,94–0,97** | 0,05 | 0,04 | 3 (p = 1,00) | 0 (p ≈ 0,77) | ALERT ×5 |
 | W2 | 0,06–0,07 | 0,04 | 0,05 | **0,96–0,97** | 0,06 | 0,05 | 3 (p = 1,00) | 0 (p ≈ 0,94) | ALERT ×5 |
-| W3 | 0,03 | 0,03 | 0,03 | 0,07 | 0,04 | **0,94** | 0 (p = 1,00) | **4 (p = 1,00)** | OK ×5 |
+| W3 | 0,03 | 0,03 | 0,03 | 0,07 | 0,04 | **0,94** | 0 (p = 1,00) | **4 (p = 1,00)** | OK ×5 → **ALERT** ×5 z regułą 7 |
 | W4 | 0,08–0,09 | 0,08–0,09 | 0,06–0,07 | **0,96** | **0,92–0,93** | 0,03–0,04 | 3 (p ≈ 0,98) | 0 (p = 1,00) | ALERT ×5 |
 
 Wnioski:
@@ -214,9 +221,10 @@ Wnioski:
 - W1: `production_loss_level` ma niewielką domieszkę poziomu 4 (p ≈ 0,16), bo spadek
   przepływu przez cieśninę bywa odczytywany jako utrata mocy. Dominujący poziom 0 jest
   poprawny; to kolejny powód, by czytać rozkład, a nie średnią (0,74–0,89).
-- **Otwarta kwestia (W3):** potwierdzona utrata 5 mln bbl/d mocy przetwórczych daje OK,
-  bo tabela dotyczy Cieśniny Ormuz. Czy taka sytuacja ma dawać ALERT, to decyzja o
-  zakresie narzędzia, nie o brzmieniu pytań.
+- W3 (potwierdzona utrata 5 mln bbl/d mocy przetwórczych przy normalnym tranzycie)
+  dawał OK, bo tabela obejmowała tylko cieśninę. Po dodaniu reguły 7 (sekcja 4) daje
+  **ALERT** ×5. Wynik ustalono, przeliczając zapisane 25 odpowiedzi przebiegu 2 nową
+  funkcją `decide()`, bez ponownych zapytań do API; decyzje V4, W1, W2 i W4 bez zmian.
 
 > Narzędzie ma charakter analityczny i edukacyjny. Wynik wspiera ocenę sytuacji,
 > nie zastępuje analizy eksperckiej ani oficjalnych komunikatów.
