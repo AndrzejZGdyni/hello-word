@@ -12,8 +12,8 @@ Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key.
 Endpoint i autoryzacja zgodne z https://api.typesafe.ai/openapi.json
 (POST /v1/systemone, nagłówek "Authorization: Bearer <klucz>").
 
-Decyzję podejmuje tabela decyzyjna (decide) na podstawie trzech pytań typu noul;
-opis w WZOR_PYTANIA.md, sekcja 4.
+Decyzję podejmuje tabela decyzyjna (decide) na podstawie pięciu pytań typu noul;
+opis w WZOR_PYTANIA.md, sekcja 4. Brzmienie pytań: jev_hormuz_template.json.
 
 Kody wyjścia: 0 — OK, 1 — błąd (walidacja, sieć, HTTP), 2 — TRIP, 3 — ALERT,
 4 — SPRAWDŹ (odpowiedź nierozstrzygnięta lub brakująca).
@@ -39,7 +39,9 @@ TZ = ZoneInfo("Europe/Warsaw")
 HALTED_KEY = "hormuz_transit_halted"
 CLOSURE_KEY = "immediate_closure_probability"
 MINES_KEY = "mines_confirmed"
-DECISION_KEYS = (HALTED_KEY, CLOSURE_KEY, MINES_KEY)
+FLOW_DROP_KEY = "flow_drop_significant"
+STEPS_KEY = "formal_closure_steps"
+DECISION_KEYS = (HALTED_KEY, CLOSURE_KEY, MINES_KEY, FLOW_DROP_KEY, STEPS_KEY)
 
 EXIT_CODES = {"OK": 0, "TRIP": 2, "ALERT": 3, "SPRAWDŹ": 4}
 
@@ -135,6 +137,7 @@ def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
     """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca."""
     v = {k: classify(answers.get(k, {}).get("noul"), yes, no) for k in DECISION_KEYS}
     halted, closure, mines = v[HALTED_KEY], v[CLOSURE_KEY], v[MINES_KEY]
+    flow_drop, steps = v[FLOW_DROP_KEY], v[STEPS_KEY]
     if halted == "tak":
         return "TRIP", "tranzyt wstrzymany", v
     if halted == "nie" and closure == "tak" and mines == "tak":
@@ -143,6 +146,10 @@ def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
         return "ALERT", "zapowiedź zamknięcia bez potwierdzenia min", v
     if halted == "nie" and closure == "nie" and mines == "tak":
         return "ALERT", "miny potwierdzone, brak zapowiedzi zamknięcia", v
+    if halted == "nie" and flow_drop == "tak":
+        return "ALERT", "wyraźny spadek przepływów bez wstrzymania tranzytu", v
+    if halted == "nie" and closure == "nie" and steps == "tak":
+        return "ALERT", "formalne kroki w kierunku zamknięcia bez decyzji", v
     if "nierozstrzygnięte" in v.values():
         return "SPRAWDŹ", "odpowiedź nierozstrzygnięta lub brakująca; uzupełnij state", v
     return "OK", "brak przesłanek zamknięcia", v
