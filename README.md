@@ -13,6 +13,8 @@ Skrypty Node.js, w których kod oblicza wskaźniki z pomiarów, a model **Jev** 
 | `jev-niewywazenie` | niewyważenie, rozkład składowych statycznej i momentowej, liczba płaszczyzn korekcji |
 | `jev-luzy` | luzy mechaniczne (typy A/B/C), lokalizacja i pilność |
 | `jev-ekg` | ćwiczenie na zapisie EKG, **nie jest narzędziem medycznym** |
+| `jev-run` | (Python) ocena raportów o sytuacji w rejonie Cieśniny Ormuz, tabela decyzyjna OK/ALERT/SPRAWDŹ/TRIP |
+| `jev-zima` | (Python) gotowość domowego ogrzewania na zimę: pogoda, opał, sieć elektroenergetyczna |
 
 Zbiorcze wyniki z danych przykładowych: [`tools/raport-zbiorczy.md`](tools/raport-zbiorczy.md).
 
