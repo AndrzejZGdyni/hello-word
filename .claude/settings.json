@@ -5,10 +5,17 @@
         "source": "github",
         "repo": "typesafe-ai/skills"
       }
+    },
+    "hello-word-mods": {
+      "source": {
+        "source": "github",
+        "repo": "AndrzejZGdyni/hello-word"
+      }
     }
   },
   "enabledPlugins": {
-    "typesafe@typesafe-ai": true
+    "typesafe@typesafe-ai": true,
+    "context-bar@hello-word-mods": true
   },
   "hooks": {
     "SessionStart": [
