@@ -1,0 +1,6 @@
+{
+  "name": "context-bar",
+  "version": "0.1.0",
+  "description": "Panel z paskiem wykorzystania kontekstu w bieżącej rozmowie",
+  "types": "./types/index.d.ts"
+}
