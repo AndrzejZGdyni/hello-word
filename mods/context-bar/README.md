@@ -14,5 +14,9 @@ o braku danych.
 
 ## Instalacja
 
-Skopiuj folder do katalogu modów sesji albo użyj `--plugin-dir mods/context-bar`.
+```
+/plugin install context-bar --marketplace AndrzejZGdyni/hello-word
+```
+
+Lub ręcznie: skopiuj folder do katalogu modów sesji albo użyj `--plugin-dir mods/context-bar`.
 Wymaga włączenia modów w sesji Claude Code.
