@@ -1,9 +1,10 @@
 import { atom, read, update } from 'claude-code'
-import type { Register, SessionContextUsage } from 'claude-code'
+import type { EngineInterface, Register, SessionContextUsage } from 'claude-code'
 
 import type { Fill } from '../types'
 
 const PANE = 'context-bar'
+const COMMANDS = ['context-bar', 'ctx']
 const BAR_CELLS = 20
 const fill = atom({ plugin: 'context-bar', key: 'fill' } as const, null, {
   shape: 'fill-1',
@@ -21,12 +22,28 @@ const barText = (usage: Fill): string => {
   return `${'🟦'.repeat(filled)}${'⬜'.repeat(BAR_CELLS - filled)} ${percent}% (${usage.tokens.toLocaleString('en-US')} / ${usage.window.toLocaleString('en-US')} tokens)`
 }
 
+async function openOrShow($: EngineInterface) {
+  const { isPlaced } = await $.ui.open({ id: PANE, title: 'Context' })
+  if (isPlaced) return { text: 'Context pane opened.' }
+
+  // This surface draws no pane: answer with the bar itself.
+  const { context } = await $.session.usage()
+  const usage = toFill(context)
+  await update($, fill, () => usage)
+
+  return {
+    text: usage === null ? 'Context: no response yet.' : `Context: ${barText(usage)}`,
+  }
+}
+
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    await $.command.register({
-      name: 'context-bar',
-      description: 'Show the context window usage bar in a pane',
-    })
+    for (const name of COMMANDS) {
+      await $.command.register({
+        name,
+        description: 'Show the context window usage bar in a pane',
+      })
+    }
     const { context } = await $.session.usage()
     await update($, fill, () => toFill(context))
     void $.ui.open({ id: PANE, title: 'Context' })
@@ -34,19 +51,7 @@ export const register: Register = on => {
     return next(e)
   })
 
-  on('command.run', { command: 'context-bar' }, async $ => {
-    const { isPlaced } = await $.ui.open({ id: PANE, title: 'Context' })
-    if (isPlaced) return { text: 'Context pane opened.' }
-
-    // This surface draws no pane: answer with the bar itself.
-    const { context } = await $.session.usage()
-    const usage = toFill(context)
-    await update($, fill, () => usage)
-
-    return {
-      text: usage === null ? 'Context: no response yet.' : `Context: ${barText(usage)}`,
-    }
-  })
+  for (const command of COMMANDS) on('command.run', { command }, $ => openOrShow($))
 
   on('session.measure', async ($, e, next) => {
     if (e.changed.includes('context')) {

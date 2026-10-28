@@ -8,7 +8,7 @@ czerwony od 85% (wtedy dodatkowo podpowiedź, by użyć `/compact`).
 
 ## Użycie
 
-Panel otwiera się przy starcie sesji; komenda `/context-bar` otwiera go ponownie.
+Panel otwiera się przy starcie sesji; komenda `/context-bar` (alias `/ctx`) otwiera go ponownie. Gdy klient nie rysuje paneli, komenda odpowiada tekstem z paskiem.
 Do pierwszej odpowiedzi modelu (oraz po kompaktowaniu) panel pokazuje komunikat
 o braku danych.
 
