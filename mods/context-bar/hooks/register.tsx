@@ -14,6 +14,13 @@ const toFill = (c: SessionContextUsage): Fill | null =>
     ? null
     : { tokens: c.tokens, window: c.window, percent: c.percent }
 
+const barText = (usage: Fill): string => {
+  const percent = Math.min(100, Math.max(0, usage.percent))
+  const filled = Math.round((percent / 100) * BAR_CELLS)
+
+  return `${'█'.repeat(filled)}${'░'.repeat(BAR_CELLS - filled)} ${percent}% (${usage.tokens.toLocaleString('en-US')} / ${usage.window.toLocaleString('en-US')} tokens)`
+}
+
 const colorFor = (percent: number) =>
   percent >= 85 ? 'red' : percent >= 60 ? 'yellow' : 'green'
 
@@ -30,14 +37,22 @@ export const register: Register = on => {
   })
 
   on('command.run', { command: 'context-bar' }, async $ => {
-    await $.ui.open({ id: PANE, title: 'Context' })
+    const { isPlaced } = await $.ui.open({ id: PANE, title: 'Context' })
+    if (isPlaced) return { text: 'Context pane opened.' }
 
-    return { text: 'Context pane opened.' }
+    // This surface draws no pane: answer with the bar itself.
+    const usage = await read($, fill)
+
+    return {
+      text: usage === null ? 'Context: no response yet.' : `Context: ${barText(usage)}`,
+    }
   })
 
   on('session.measure', async ($, e, next) => {
     if (e.changed.includes('context')) {
-      await update($, fill, () => toFill(e.context))
+      const usage = toFill(e.context)
+      await update($, fill, () => usage)
+      $.ui.status(usage === null ? undefined : `Context ${usage.percent}%`)
     }
 
     return next(e)
