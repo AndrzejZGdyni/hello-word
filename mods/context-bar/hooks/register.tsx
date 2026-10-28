@@ -30,7 +30,8 @@ export const register: Register = on => {
       name: 'context-bar',
       description: 'Show the context window usage bar in a pane',
     })
-    await update($, fill, () => null)
+    const { context } = await $.session.usage()
+    await update($, fill, () => toFill(context))
     void $.ui.open({ id: PANE, title: 'Context' })
 
     return next(e)
@@ -41,7 +42,9 @@ export const register: Register = on => {
     if (isPlaced) return { text: 'Context pane opened.' }
 
     // This surface draws no pane: answer with the bar itself.
-    const usage = await read($, fill)
+    const { context } = await $.session.usage()
+    const usage = toFill(context)
+    await update($, fill, () => usage)
 
     return {
       text: usage === null ? 'Context: no response yet.' : `Context: ${barText(usage)}`,
