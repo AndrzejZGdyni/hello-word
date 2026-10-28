@@ -58,17 +58,23 @@ export const register: Register = on => {
     return next(e)
   })
 
-  // Beneath every answer: plain text cannot be coloured, so the bar is blue squares.
-  on('turn.complete', async ($, e, next) => {
-    const ran = await next(e)
-    if (e.reason !== 'answer' || e.agentId !== undefined) return ran
+  // Plain tool output is not drawn on every surface, so the model is handed the
+  // line and asked to close each answer with it; the user never sees the block.
+  on('prompt.submit', async ($, e, next) => {
+    if (e.command !== undefined || e.origin !== undefined) return next(e)
 
     const { context } = await $.session.usage()
     const usage = toFill(context)
-    if (usage === null) return ran
+    if (usage === null) return next(e)
     await update($, fill, () => usage)
 
-    return { ...ran, text: `Context ${barText(usage)}` }
+    return next({
+      ...e,
+      context: [
+        ...(e.context ?? []),
+        `context-bar: end your reply with a final line, exactly as written and with nothing after it:\nContext ${barText(usage)}`,
+      ],
+    })
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
