@@ -1,0 +1,12 @@
+{
+  "name": "hello-word-mods",
+  "owner": { "name": "AndrzejZGdyni" },
+  "description": "Mody do Claude Code",
+  "plugins": [
+    {
+      "name": "context-bar",
+      "source": "./mods/context-bar",
+      "description": "Panel z paskiem wykorzystania kontekstu w bieżącej rozmowie"
+    }
+  ]
+}
