@@ -18,11 +18,8 @@ const barText = (usage: Fill): string => {
   const percent = Math.min(100, Math.max(0, usage.percent))
   const filled = Math.round((percent / 100) * BAR_CELLS)
 
-  return `${'█'.repeat(filled)}${'░'.repeat(BAR_CELLS - filled)} ${percent}% (${usage.tokens.toLocaleString('en-US')} / ${usage.window.toLocaleString('en-US')} tokens)`
+  return `${'🟦'.repeat(filled)}${'⬜'.repeat(BAR_CELLS - filled)} ${percent}% (${usage.tokens.toLocaleString('en-US')} / ${usage.window.toLocaleString('en-US')} tokens)`
 }
-
-const colorFor = (percent: number) =>
-  percent >= 85 ? 'red' : percent >= 60 ? 'yellow' : 'green'
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
@@ -61,6 +58,35 @@ export const register: Register = on => {
     return next(e)
   })
 
+  // Beneath every answer: plain text cannot be coloured, so the bar is blue squares.
+  on('turn.complete', async ($, e, next) => {
+    const ran = await next(e)
+    if (e.reason !== 'answer' || e.agentId !== undefined) return ran
+
+    const { context } = await $.session.usage()
+    const usage = toFill(context)
+    if (usage === null) return ran
+    await update($, fill, () => usage)
+
+    return { ...ran, text: `Context ${barText(usage)}` }
+  })
+
+  on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    const usage = await read($, fill)
+    if (usage === null || e.props.hasSurvey) return next(e)
+
+    const { Text } = $.ui.resolve(e)
+    const percent = Math.min(100, Math.max(0, usage.percent))
+    const filled = Math.round((percent / 100) * BAR_CELLS)
+
+    return (
+      <Text color="blue">
+        {'█'.repeat(filled)}
+        {'░'.repeat(BAR_CELLS - filled)} {percent}%
+      </Text>
+    )
+  })
+
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const { Box, Text } = $.ui.resolve(e)
     const usage = await read($, fill)
@@ -71,12 +97,11 @@ export const register: Register = on => {
 
     const percent = Math.min(100, Math.max(0, usage.percent))
     const filled = Math.round((percent / 100) * BAR_CELLS)
-    const color = colorFor(percent)
 
     return (
       <Box flexDirection="column">
         <Text>
-          <Text color={color}>{'█'.repeat(filled)}</Text>
+          <Text color="blue">{'█'.repeat(filled)}</Text>
           <Text dimColor>{'░'.repeat(BAR_CELLS - filled)}</Text>
           {` ${percent}%`}
         </Text>
