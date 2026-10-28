@@ -6,6 +6,8 @@ import type { Fill } from '../types'
 const PANE = 'context-bar'
 const COMMANDS = ['context-bar', 'ctx']
 const BAR_CELLS = 20
+// Emoji squares are wide: ten fit one line on a phone.
+const TEXT_CELLS = 10
 const fill = atom({ plugin: 'context-bar', key: 'fill' } as const, null, {
   shape: 'fill-1',
 })
@@ -17,9 +19,11 @@ const toFill = (c: SessionContextUsage): Fill | null =>
 
 const barText = (usage: Fill): string => {
   const percent = Math.min(100, Math.max(0, usage.percent))
-  const filled = Math.round((percent / 100) * BAR_CELLS)
+  const filled = Math.round((percent / 100) * TEXT_CELLS)
+  const tokens = usage.tokens.toLocaleString('en-US')
+  const window = usage.window.toLocaleString('en-US')
 
-  return `${'🟦'.repeat(filled)}${'⬜'.repeat(BAR_CELLS - filled)} ${percent}% (${usage.tokens.toLocaleString('en-US')} / ${usage.window.toLocaleString('en-US')} tokens)`
+  return `Context\n${'🟦'.repeat(filled)}${'⬜'.repeat(TEXT_CELLS - filled)} ${percent}%\n${tokens} / ${window} tokens`
 }
 
 async function openOrShow($: EngineInterface) {
@@ -32,7 +36,7 @@ async function openOrShow($: EngineInterface) {
   await update($, fill, () => usage)
 
   return {
-    text: usage === null ? 'Context: no response yet.' : `Context: ${barText(usage)}`,
+    text: usage === null ? 'Context: no response yet.' : barText(usage),
   }
 }
 
@@ -77,7 +81,7 @@ export const register: Register = on => {
       ...e,
       context: [
         ...(e.context ?? []),
-        `context-bar: end your reply with a final line, exactly as written and with nothing after it:\nContext ${barText(usage)}`,
+        `context-bar: end your reply with these three lines, as written, each on its own line and with nothing after them:\n${barText(usage)}`,
       ],
     })
   })
