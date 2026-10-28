@@ -70,7 +70,9 @@ export const register: Register = on => {
   // Plain tool output is not drawn on every surface, so the model is handed the
   // line and asked to close each answer with it; the user never sees the block.
   on('prompt.submit', async ($, e, next) => {
-    if (e.command !== undefined || e.origin !== undefined) return next(e)
+    const kind = e.origin?.kind
+    const isPerson = kind === undefined || kind === 'composer' || kind === 'bridge' || kind === 'sdk'
+    if (e.command !== undefined || !isPerson) return next(e)
 
     const { context } = await $.session.usage()
     const usage = toFill(context)
