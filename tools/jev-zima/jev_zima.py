@@ -6,7 +6,8 @@ w kodzie (decide) wyznacza poziom. Opis: README.md w tym katalogu.
 
 Użycie:
     python jev_zima.py zima_RRRR-MM-DD.json --dry-run
-    TYPESAFE_API_KEY=<klucz> python jev_zima.py zima_RRRR-MM-DD.json --log zima_log.jsonl
+    python jev_zima.py zima_RRRR-MM-DD.json --log zima_log.jsonl
+    (klucz: TYPESAFE_API_KEY poza sesją Claude Code w chmurze; w niej dodaje go proxy)
 
 Kody wyjścia: 0 — OK, 1 — błąd, 2 — KRYTYCZNE, 3 — ALERT, 4 — SPRAWDŹ, 5 — UWAGA.
 
@@ -88,12 +89,13 @@ def ask(payload: dict) -> dict:
     try:
         r = requests.post(
             jr.API_URL,
-            headers={jr.AUTH_HEADER: jr.AUTH_PREFIX + jr.load_key(),
-                     "Content-Type": "application/json"},
-            json=payload, timeout=60,
+            headers=jr.auth_headers(), json=payload, timeout=60,
         )
     except requests.RequestException as e:
         sys.exit(f"Błąd połączenia: {e}")
+    if r.status_code == 401:
+        sys.exit("HTTP 401: brak lub zły klucz. Ustaw TYPESAFE_API_KEY albo uruchom w sesji "
+                 "Claude Code ze środowiskiem, w którym TypeSafe jest podłączony.")
     if r.status_code != 200:
         sys.exit(f"HTTP {r.status_code}: {r.text[:500]}")
     return r.json()

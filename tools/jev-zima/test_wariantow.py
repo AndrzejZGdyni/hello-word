@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Test wariantów zestawu zimowego: każdy wariant N razy, decyzje i odpowiedzi do CSV.
 
-Uruchamiać w katalogu tools/jev-zima; wymaga TYPESAFE_API_KEY. Kolumna 'oczekiwany'
+Uruchamiać w katalogu tools/jev-zima; klucz jak w jev_zima.py. Kolumna 'oczekiwany'
 to wynik, jakiego wymaga tabela decyzyjna dla danego opisu; niezgodność wypisywana
 jest jako NIEZGODNOŚĆ.
 """

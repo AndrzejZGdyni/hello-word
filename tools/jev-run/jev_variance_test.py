@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Test wariancji Jev: warianty W1–W4, N przebiegów, surowe wyniki i rozkłady do CSV.
 
-Uruchamiać w katalogu tools/jev-run. Wymaga TYPESAFE_API_KEY w środowisku
-(obsługiwanego przez jev_run.py). Pytania pochodzą z jev_hormuz_template.json;
+Uruchamiać w katalogu tools/jev-run. Klucz: TYPESAFE_API_KEY, a w sesji Claude Code
+w chmurze dodaje go proxy (jev_run.py). Pytania pochodzą z jev_hormuz_template.json;
 wariant V4 to stan wzorcowy z 26.10.2026 (kontrola regresji, oczekiwany wynik OK).
 """
 import csv

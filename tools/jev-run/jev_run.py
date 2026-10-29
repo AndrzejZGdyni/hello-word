@@ -8,7 +8,8 @@ Użycie:
     python jev_run.py payload.json --dry-run        # walidacja bez wysyłki
     python jev_run.py payload.json --yes 0.7 --no 0.3 --log jev_log.jsonl
 
-Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key.
+Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key. W sesji Claude Code
+w chmurze z podłączonym TypeSafe klucz wstrzykuje proxy i żaden z nich nie jest potrzebny.
 Endpoint i autoryzacja zgodne z https://api.typesafe.ai/openapi.json
 (POST /v1/systemone, nagłówek "Authorization: Bearer <klucz>").
 
@@ -50,13 +51,24 @@ EXIT_CODES = {"OK": 0, "TRIP": 2, "ALERT": 3, "SPRAWDŹ": 4}
 
 
 def load_key() -> str:
+    """Klucz z TYPESAFE_API_KEY lub ~/.typesafe/api_key; pusty, gdy brak obu."""
     key = os.environ.get("TYPESAFE_API_KEY")
     if key:
         return key.strip()
     path = Path.home() / ".typesafe" / "api_key"
     if path.exists():
         return path.read_text().strip()
-    sys.exit("Brak klucza: ustaw TYPESAFE_API_KEY lub ~/.typesafe/api_key")
+    return ""
+
+
+def auth_headers() -> dict:
+    """Nagłówki żądania. Bez klucza nie wysyła Authorization: w sesji w chmurze
+    klucz dodaje proxy, a poza nią API odpowie 401 z czytelnym komunikatem."""
+    headers = {"Content-Type": "application/json"}
+    key = load_key()
+    if key:
+        headers[AUTH_HEADER] = AUTH_PREFIX + key
+    return headers
 
 
 def canonical(value) -> str:
@@ -210,12 +222,13 @@ def main() -> None:
     try:
         r = requests.post(
             API_URL,
-            headers={AUTH_HEADER: AUTH_PREFIX + load_key(),
-                     "Content-Type": "application/json"},
-            json=payload, timeout=60,
+            headers=auth_headers(), json=payload, timeout=60,
         )
     except requests.RequestException as e:
         sys.exit(f"Błąd połączenia: {e}")
+    if r.status_code == 401:
+        sys.exit("HTTP 401: brak lub zły klucz. Ustaw TYPESAFE_API_KEY albo uruchom w sesji "
+                 "Claude Code ze środowiskiem, w którym TypeSafe jest podłączony.")
     if r.status_code != 200:
         sys.exit(f"HTTP {r.status_code}: {r.text[:500]}")
     resp = r.json()
