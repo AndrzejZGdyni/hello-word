@@ -7,6 +7,7 @@ w kodzie (decide) wyznacza poziom. Opis: README.md w tym katalogu.
 Użycie:
     python jev_zima.py zima_RRRR-MM-DD.json --dry-run
     python jev_zima.py zima_RRRR-MM-DD.json --log zima_log.jsonl
+    python jev_zima.py zima_RRRR-MM-DD.json --override coal_unavailable=nie   # ocena analityka
     (klucz: TYPESAFE_API_KEY poza sesją Claude Code w chmurze; w niej dodaje go proxy)
 
 Kody wyjścia: 0 — OK, 1 — błąd, 2 — KRYTYCZNE, 3 — ALERT, 4 — SPRAWDŹ, 5 — UWAGA.
@@ -65,9 +66,12 @@ def validate(payload: dict) -> None:
         sys.exit("Błędy walidacji:\n  - " + "\n  - ".join(errors))
 
 
-def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
-    """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca."""
+def decide(answers: dict, yes: float, no: float,
+           overrides: dict | None = None) -> tuple[str, str, dict]:
+    """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca.
+    overrides: oceny analityka zastępujące klasyfikację odpowiedzi modelu."""
     v = {k: jr.classify(answers.get(k, {}).get("noul"), yes, no) for k in DECISION_KEYS}
+    v.update(overrides or {})
     if v[COLD_KEY] == "tak" and (v[COAL_KEY] == "tak" or v[GRID_EMERGENCY_KEY] == "tak"):
         return "KRYTYCZNE", "mróz przy brakach opału lub ograniczeniach zasilania", v
     if v[COAL_KEY] == "tak":
@@ -107,10 +111,14 @@ def main() -> None:
     ap.add_argument("--log", default="zima_log.jsonl")
     ap.add_argument("--yes", type=float, default=0.7, help="próg 'tak' dla noul")
     ap.add_argument("--no", type=float, default=0.3, help="próg 'nie' dla noul")
+    ap.add_argument("--override", action="append", default=[], metavar="KLUCZ=tak|nie",
+                    help="ocena analityka dla pytania decyzyjnego; zapisywana w dzienniku "
+                         "obok odpowiedzi modelu (można podać kilka razy)")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     if not (0 <= args.no < args.yes <= 1):
         sys.exit("Progi muszą spełniać 0 <= --no < --yes <= 1")
+    overrides = jr.parse_overrides(args.override, DECISION_KEYS)
 
     payload = json.loads(Path(args.payload).read_text(encoding="utf-8"))
     payload.setdefault("model", "jev-latest")
@@ -121,7 +129,8 @@ def main() -> None:
 
     resp = ask(payload)
     answers = jr.extract_answers(resp)
-    result, reason, inputs = decide(answers, args.yes, args.no)
+    model_inputs = decide(answers, args.yes, args.no)[2]
+    result, reason, inputs = decide(answers, args.yes, args.no, overrides)
     record = {
         "timestamp": datetime.now(jr.TZ).isoformat(timespec="seconds"),
         "model": resp.get("model", payload["model"]),
@@ -132,7 +141,10 @@ def main() -> None:
             json.dumps(payload["questions"], sort_keys=True).encode()).hexdigest()[:16],
         "answers": answers,
         "decision": {"result": result, "reason": reason, "inputs": inputs,
-                     "thresholds": {"yes": args.yes, "no": args.no}},
+                     "thresholds": {"yes": args.yes, "no": args.no},
+                     "overrides": {k: {"analityk": val, "model": model_inputs[k],
+                                       "noul": answers.get(k, {}).get("noul")}
+                                   for k, val in overrides.items()}},
         "usage": resp.get("usage"),
         "raw": resp,
     }
@@ -145,7 +157,15 @@ def main() -> None:
         print(f"  {name}: {a}")
     print(f"\nTabela decyzyjna (tak >= {args.yes:.2f}, nie <= {args.no:.2f}):")
     for key, val in inputs.items():
-        print(f"  {key}: {val}")
+        note = ""
+        if key in overrides:
+            note = (f"  ← ocena analityka (model: {model_inputs[key]}, "
+                    f"noul={answers.get(key, {}).get('noul')})")
+        print(f"  {key}: {val}{note}")
+    if overrides and model_inputs != inputs:
+        model_result = decide(answers, args.yes, args.no)[0]
+        if model_result != result:
+            print(f"Wynik bez ocen analityka: {model_result}")
     print(f"Wynik: {result} – {reason}")
     print(f"\nZapisano do {log}")
     sys.exit(EXIT_CODES[result])

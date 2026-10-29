@@ -60,16 +60,24 @@ Wiersze sprawdzane od góry; wygrywa pierwszy pasujący.
 | 7 | którakolwiek odpowiedź nierozstrzygnięta | **SPRAWDŹ** – uzupełnij `state` |
 | 8 | pozostałe | **OK** |
 
+**Ocena analityka (`--override`).** Gdy rozstrzygasz pytanie decyzyjne inaczej niż model,
+podaj to jawnie, np. `--override coal_unavailable=nie` (węgiel wyprzedaje się, ale jest
+uzupełniany codziennie). Odpowiedź modelu i progi pozostają bez zmian; dziennik zapisuje
+w `decision.overrides` ocenę analityka, klasyfikację modelu i wartość noul, a na ekranie
+widać też wynik bez ocen analityka.
+
 ## 5. Uruchomienie
 
 ```bash
 cd tools/jev-zima
 python jev_zima.py zima_RRRR-MM-DD.json --dry-run
 TYPESAFE_API_KEY=<klucz> python jev_zima.py zima_RRRR-MM-DD.json --log zima_log.jsonl
+TYPESAFE_API_KEY=<klucz> python jev_zima.py zima_RRRR-MM-DD.json --override coal_unavailable=nie
 TYPESAFE_API_KEY=<klucz> python test_wariantow.py   # 5 wariantów × 3 przebiegi
 ```
 
 Kody wyjścia: `0` OK, `1` błąd, `2` KRYTYCZNE, `3` ALERT, `4` SPRAWDŹ, `5` UWAGA.
+`TYPESAFE_API_KEY` jest potrzebny tylko poza sesją Claude Code w chmurze.
 Pliki `zima_log.jsonl` i `zima_warianty.csv` są wykluczone z repozytorium.
 
 ## 6. Test wariantów (28.10.2026, `jev-1.14.0`)

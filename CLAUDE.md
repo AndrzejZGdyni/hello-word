@@ -24,7 +24,7 @@
   curl -sS https://api.typesafe.ai/v1/systemone -H "Content-Type: application/json" -d @payload.json
   ```
 - **Gdy użytkownik rozstrzyga pytanie inaczej niż model** (np. „uznaj X za potwierdzenie
-  min”), użyj `jev_run.py --override KLUCZ=tak|nie`. Nie obniżaj progów i nie przeredagowuj
+  min”), użyj `--override KLUCZ=tak|nie` (`jev_run.py` i `jev_zima.py`). Nie obniżaj progów i nie przeredagowuj
   `state`, żeby model przekroczył próg.
 - **Nie zmieniaj brzmienia pytań w szablonach** bez prośby użytkownika – zmienia to
   `questions_sha256` i zrywa porównywalność wyników w dziennikach.

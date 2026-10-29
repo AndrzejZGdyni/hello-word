@@ -162,14 +162,14 @@ def dominant_level(answer: dict):
     return int(max(probs, key=probs.get))
 
 
-def parse_overrides(items: list[str]) -> dict:
-    """'klucz=tak|nie' -> {klucz: wartość}; tylko pytania decyzyjne noul."""
+def parse_overrides(items: list[str], keys: tuple = DECISION_KEYS) -> dict:
+    """'klucz=tak|nie' -> {klucz: wartość}; tylko pytania decyzyjne noul z keys."""
     out = {}
     for item in items:
         key, sep, val = item.partition("=")
-        if not sep or key not in DECISION_KEYS or val not in ("tak", "nie"):
+        if not sep or key not in keys or val not in ("tak", "nie"):
             sys.exit(f"--override {item!r}: oczekiwano KLUCZ=tak|nie, "
-                     f"KLUCZ jeden z: {', '.join(DECISION_KEYS)}")
+                     f"KLUCZ jeden z: {', '.join(keys)}")
         out[key] = val
     return out
 
