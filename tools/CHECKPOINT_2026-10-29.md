@@ -20,6 +20,14 @@ wątku. Instrukcja uruchamiania: [`CLAUDE.md`](../CLAUDE.md).
 - Klucz API dodaje środowisko chmurowe z podłączonym TypeSafe. Payload z innymi pytaniami
   niż w szablonach wysyła się bezpośrednio do API (`CLAUDE.md`).
 
+## Inne narzędzia Jev w repozytorium (osobny wątek)
+
+- `tools/jev-centrowka/`, `tools/jev-lozysko/`, `tools/jev-luzy/`, `tools/jev-niewywazenie/`:
+  diagnostyka wibroakustyczna maszyn na danych syntetycznych (ćwiczenie edukacyjne);
+  zbiorcze podsumowanie w `tools/raport-zbiorczy.md`.
+- `tools/jev-ekg/`: ćwiczenie edukacyjne – ocena EKG z obrazu, opis we własnym `README.md`.
+- Niezwiązane z analizą Ormuzu/zimy; nie wymagają działania przy kontynuacji tego checkpointu.
+
 ## Ostatnie wyniki (`jev-1.14.0`)
 
 | Data | Analiza | Wynik |
