@@ -1,0 +1,54 @@
+{
+  "model": "jev-latest",
+  "state": "Stan na DD.MM.RRRR. <fakty według README.md, sekcja 2>",
+  "questions": {
+    "vortex_disruption_risk": {
+      "type": "noul",
+      "instructions": "Czy według raportu prognozy wskazują na ryzyko rozbicia wiru polarnego w nadchodzącej zimie?",
+      "criteria": {
+        "true": "Prognozy wymieniają rozbicie lub osłabienie wiru polarnego jako możliwe albo prawdopodobne.",
+        "false": "Prognozy nie wspominają o zaburzeniu wiru polarnego albo je wykluczają."
+      }
+    },
+    "cold_wave_imminent": {
+      "type": "noul",
+      "instructions": "Czy według raportu silna fala mrozów trwa obecnie albo jest prognozowana na najbliższe 7 dni?",
+      "criteria": {
+        "true": "Raport podaje trwające mrozy wyraźnie poniżej normy albo prognozę takich mrozów na najbliższy tydzień.",
+        "false": "W najbliższym tygodniu temperatury są w normie lub powyżej; ewentualne mrozy dotyczą odleglejszych miesięcy."
+      }
+    },
+    "coal_unavailable": {
+      "type": "noul",
+      "instructions": "Czy według raportu węgiel opałowy jest obecnie trudno dostępny w sprzedaży?",
+      "criteria": {
+        "true": "Raport podaje braki węgla w sklepach, na składach lub w sprzedaży internetowej albo limity zakupu.",
+        "false": "Węgiel jest regularnie dostępny w sprzedaży."
+      }
+    },
+    "coal_delivery_delays": {
+      "type": "noul",
+      "instructions": "Czy według raportu dostawy zamówionego opału są opóźnione?",
+      "criteria": {
+        "true": "Raport podaje opóźnienia lub wstrzymanie dostaw zamówionego opału.",
+        "false": "Zamówiony opał jest dostarczany terminowo."
+      }
+    },
+    "grid_emergency_measures": {
+      "type": "noul",
+      "instructions": "Czy według raportu operator systemu elektroenergetycznego ogłosił stopnie zasilania albo apel o ograniczenie poboru energii?",
+      "criteria": {
+        "true": "Operator ogłosił stopnie zasilania, planowe wyłączenia albo oficjalny apel o ograniczenie zużycia energii.",
+        "false": "Raport nie podaje takich komunikatów; ograniczenia są opisane najwyżej jako możliwe w przyszłości."
+      }
+    },
+    "grid_reserve_low": {
+      "type": "noul",
+      "instructions": "Czy według raportu rezerwa mocy w krajowym systemie elektroenergetycznym jest obecnie niska?",
+      "criteria": {
+        "true": "Operator sygnalizuje niską lub niewystarczającą rezerwę mocy.",
+        "false": "Rezerwa mocy jest utrzymywana na bezpiecznym poziomie."
+      }
+    }
+  }
+}

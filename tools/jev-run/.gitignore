@@ -1,2 +1,4 @@
 jev_log.jsonl
 __pycache__/
+jev_variance_raw.csv
+jev_variance_summary.csv

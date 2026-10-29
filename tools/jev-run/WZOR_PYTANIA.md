@@ -1,7 +1,8 @@
 # Wzór zapytania do Jev – sytuacja w rejonie Cieśniny Ormuz
 
 Szablon do cyklicznej oceny raportów sytuacyjnych narzędziem `jev_run.py`.
-Opracowany na podstawie przebiegów z 26.10.2026 (`jev-1.14.0`, wersje v1–v4).
+Opracowany na podstawie przebiegów z 26–27.10.2026 (`jev-1.14.0`): wersje v1–v4
+oraz test wariancji W1–W4 (sekcja 8).
 
 ## 1. Zasada działania
 
@@ -22,10 +23,11 @@ potrzebne do odpowiedzi na pytania:
 | Element | Przykład | Uwagi |
 |---|---|---|
 | Data i pora stanu | „Stan na 26.10.2026 rano.” | Zawsze na początku |
-| Ataki na żeglugę | liczba ataków w miesiącu i od początku wojny, uszkodzone VLCC | **Wymagane** dla `supply_stress_level`; podawaj liczby, nie oceny |
-| Koszty frachtu i ubezpieczeń | War Risk Premium, stawki frachtu | **Wymagane** dla `supply_stress_level` (sekcja 7) |
+| Ataki na żeglugę | liczba ataków w miesiącu i od początku wojny, uszkodzone VLCC | **Wymagane** dla `shipping_disruption_level`; podawaj liczby, nie oceny |
+| Koszty frachtu i ubezpieczeń | War Risk Premium, stawki frachtu | **Wymagane** dla `shipping_disruption_level` (sekcja 7) |
 | Miny | „doniesienia o minach” / „miny potwierdzone przez …” | **Odróżniaj doniesienia od potwierdzeń** |
-| Przepływy ropy | eksport w mln bbl/d i punkt odniesienia sprzed wojny | Bez punktu odniesienia pytanie o spadek przepływów jest nierozstrzygalne |
+| Przepływy ropy | przepływ przez cieśninę w mln bbl/d i punkt odniesienia sprzed wojny | **Wymagane** dla `flow_drop_significant`; bez punktu odniesienia pytanie jest nierozstrzygalne |
+| Utrata mocy wydobywczych i przetwórczych | wielkość w mln bbl/d i przewidywany czas | Dla `production_loss_level`; podawaj, kto potwierdza |
 | Infrastruktura lądowa | deklaracje stron i to, czy je potwierdzono | Zawsze pisz, kto deklaruje, a kto potwierdza |
 | Dyplomacja | mediacje, ultimata, oficjalne zapowiedzi | Cytuj oficjalne komunikaty, jeśli są |
 | Rynek | Brent/WTI, fracht, ubezpieczenia | Opcjonalnie; nie jest wejściem do reguły TRIP |
@@ -51,87 +53,64 @@ Przykładowy `state` (wersja v4 z 26.10.2026, wzorcowa):
 > natomiast w Teheranie rozpoczęły się rozmowy z mediatorami z Kataru, a notowania WTI
 > na otwarciu sesji spadły z 103,27 USD do 101,65 USD.
 
-## 3. Pytania (JSON do skopiowania)
+## 3. Pytania
 
-Zmieniaj wyłącznie `state`. Brzmienie pytań zostaw bez zmian, żeby wyniki w dzienniku
-dały się porównywać (`questions_sha256` musi być stały).
+Brzmienie pytań jest przechowywane w jednym miejscu: **`jev_hormuz_template.json`**.
+Przy każdej analizie skopiuj ten plik i zmień wyłącznie `state`. Brzmienia pytań nie
+zmieniaj, żeby wyniki w dzienniku dały się porównywać (`questions_sha256` musi być stały;
+obecny zestaw: `1780910a27e1a438`).
 
-```json
-{
-  "model": "jev-latest",
-  "state": "Stan na DD.MM.RRRR <pora>. <fakty według sekcji 2>",
-  "questions": {
-    "immediate_closure_probability": {
-      "type": "noul",
-      "instructions": "Czy według raportu Iran ogłosił zamknięcie Cieśniny Ormuz dla żeglugi handlowej albo przystąpił do jej blokowania?",
-      "criteria": {
-        "true": "Raport podaje oficjalną zapowiedź zamknięcia cieśniny lub działania, które ją blokują, np. potwierdzone postawienie zapór minowych na torach wodnych.",
-        "false": "Raport opisuje ataki na pojedyncze statki i niepotwierdzone doniesienia, a statki nadal przepływają przez cieśninę."
-      }
-    },
-    "hormuz_transit_halted": {
-      "type": "noul",
-      "instructions": "Czy według raportu tranzyt ropy przez Cieśninę Ormuz jest obecnie faktycznie wstrzymany?",
-      "criteria": {
-        "true": "Przepływy ropy przez cieśninę spadły niemal do zera.",
-        "false": "Tankowce nadal przepływają, a wolumen eksportu utrzymuje się, mimo ataków na statki."
-      }
-    },
-    "mines_confirmed": {
-      "type": "noul",
-      "instructions": "Czy raport podaje potwierdzone postawienie min morskich w Cieśninie Ormuz?",
-      "criteria": {
-        "true": "Miny zostały potwierdzone, np. przez marynarkę wojenną lub wskutek wybuchu miny na statku.",
-        "false": "Raport wspomina jedynie o doniesieniach lub podejrzeniach dotyczących min."
-      }
-    },
-    "saudi_infrastructure_hit_confirmed": {
-      "type": "noul",
-      "instructions": "Czy raport podaje potwierdzone uszkodzenie saudyjskiej infrastruktury naftowej na lądzie, np. terminali Yanbu i Rabigh lub rurociągu East-West?",
-      "criteria": {
-        "true": "Uszkodzenie potwierdziła Arabia Saudyjska lub niezależne źródło.",
-        "false": "Raport zawiera tylko deklaracje atakującego, których Arabia Saudyjska nie potwierdza."
-      }
-    },
-    "supply_stress_level": {
-      "type": "score",
-      "instructions": "Jaki jest obecny poziom zagrożenia dla dostaw ropy z Zatoki Perskiej według raportu?",
-      "criteria": [
-        "Ataki na statki ustały, a przepływy ropy są w normie.",
-        "Zdarzają się sporadyczne incydenty, a przepływy ropy są w normie.",
-        "Statki są regularnie atakowane, przepływy utrzymane, rosną koszty frachtu i ubezpieczeń.",
-        "Przepływy ropy wyraźnie spadły względem okresu przedwojennego.",
-        "Tranzyt jest faktycznie wstrzymany lub trwale utracono duże moce wydobywcze."
-      ]
-    }
-  }
-}
-```
+| Pytanie | Typ | Rola | Co sprawdza |
+|---|---|---|---|
+| `hormuz_transit_halted` | noul | decyzyjne | czy tranzyt ropy jest faktycznie wstrzymany |
+| `immediate_closure_probability` | noul | decyzyjne | czy Iran ogłosił zamknięcie albo przystąpił do blokowania |
+| `mines_confirmed` | noul | decyzyjne | czy postawienie min jest potwierdzone, a nie tylko zgłaszane |
+| `flow_drop_significant` | noul | decyzyjne | czy przepływ przez cieśninę jest co najmniej o 10% niższy niż przed wojną |
+| `formal_closure_steps` | noul | decyzyjne | czy organy Iranu podjęły formalne kroki ku zamknięciu bez wiążącej decyzji |
+| `saudi_infrastructure_hit_confirmed` | noul | pomocnicze | czy uszkodzenie lądowej infrastruktury saudyjskiej jest potwierdzone |
+| `shipping_disruption_level` | score 0–4 | pomocnicze | zakłócenie żeglugi i przepływu przez cieśninę |
+| `production_loss_level` | score 0–4 | decyzyjne (poziom dominujący) | utrata mocy wydobywczych lub przetwórczych w państwach Zatoki |
+
+Wcześniejsza skala `supply_stress_level` łączyła na poziomie 4 wstrzymanie tranzytu
+z utratą wydobycia i dawała rozkład z dwoma maksimami, gdy tylko jedno z nich zachodziło
+(sekcja 8, W3). Zastąpiły ją dwie osobne skale.
 
 ## 4. Interpretacja i reguła decyzyjna
 
 Progi dla `noul`: **≥ 0,7 = tak**, **≤ 0,3 = nie**, **0,3–0,7 = nierozstrzygnięte**
 (raport nie wystarcza do oceny; uzupełnij `state` o źródło, zamiast przeformułowywać pytanie).
 
-| `hormuz_transit_halted` | `immediate_closure_probability` | `mines_confirmed` | Wynik |
-|---|---|---|---|
-| tak | dowolne | dowolne | **TRIP** – tranzyt wstrzymany |
-| nie | tak | tak | **TRIP** – zamknięcie zapowiedziane i wsparte minami |
-| nie | tak | nie / nierozstrzygnięte | **ALERT** – zapowiedź bez potwierdzenia; ponów ocenę przy następnym raporcie |
-| nie | nie | tak | **ALERT** – miny potwierdzone, brak zapowiedzi zamknięcia |
-| inne połączenie z odpowiedzią nierozstrzygniętą lub brakującą | | | **SPRAWDŹ** – uzupełnij źródła i powtórz |
-| nie | nie | nie | **OK** |
+Wiersze są sprawdzane od góry; wygrywa pierwszy pasujący.
 
-Wskaźniki pomocnicze (nie wchodzą do reguły TRIP, pokazują trend):
+| # | Warunek | Wynik |
+|---|---|---|
+| 1 | `hormuz_transit_halted` = tak | **TRIP** – tranzyt wstrzymany |
+| 2 | halted = nie, `immediate_closure_probability` = tak, `mines_confirmed` = tak | **TRIP** – zamknięcie zapowiedziane i wsparte minami |
+| 3 | halted = nie, closure = tak | **ALERT** – zapowiedź bez potwierdzenia min |
+| 4 | halted = nie, closure = nie, mines = tak | **ALERT** – miny potwierdzone, brak zapowiedzi |
+| 5 | halted = nie, `flow_drop_significant` = tak | **ALERT** – wyraźny spadek przepływów bez wstrzymania |
+| 6 | halted = nie, closure = nie, `formal_closure_steps` = tak | **ALERT** – formalne kroki ku zamknięciu bez decyzji |
+| 7 | dominujący poziom `production_loss_level` ≥ 3 (utrata ≥ ok. 1 mln bbl/d) | **ALERT** – duża utrata mocy wydobywczych lub przetwórczych |
+| 8 | którakolwiek odpowiedź noul decyzyjna nierozstrzygnięta lub brakująca | **SPRAWDŹ** – uzupełnij źródła i powtórz |
+| 9 | pozostałe | **OK** |
+
+Reguła 7 rozszerza zakres narzędzia poza samą cieśninę: duża utrata mocy w państwach
+Zatoki zagraża dostawom także przy normalnym tranzycie. Poziom dominujący to poziom
+o najwyższym prawdopodobieństwie w `probabilities`, nie średnia `score`. Próg ustawia
+stała `PRODUCTION_ALERT_LEVEL` w `jev_run.py`.
+
+Dziennik zapisuje tylko pierwszy pasujący powód. Gdy ALERT ma kilka przyczyn (np. W4:
+spadek przepływów i formalne kroki), pozostałe widać w polu `decision.inputs`.
+
+Wskaźniki pomocnicze (nie wchodzą do tabeli, pokazują tło i trend):
 
 - `saudi_infrastructure_hit_confirmed` – sygnał rozszerzenia konfliktu na lądzie,
-- `supply_stress_level` – odczytuj **rozkład `probabilities`**, nie tylko średnią `score`;
-  dwa maksima (np. na poziomach 2 i 4) oznaczają raport niespójny lub dwuznaczny.
+- `shipping_disruption_level` (oraz `production_loss_level` poza regułą 7) – odczytuj **rozkład
+  `probabilities`**, nie średnią `score`. Dwa maksima oznaczają raport niespójny lub
+  dwuznaczny; średnia leży wtedy między nimi i nie odpowiada żadnemu opisowi.
 
-Tabelę realizuje funkcja `decide()` w `jev_run.py`. Wiersze są sprawdzane od góry
-i wygrywa pierwszy pasujący, więc np. zapowiedź zamknięcia przy nierozstrzygniętych
-minach daje ALERT, a nie SPRAWDŹ. Wynik, uzasadnienie i sklasyfikowane wejścia trafiają
-do dziennika w polu `decision`. Progi zmienia się opcjami `--yes` i `--no`.
+Tabelę realizuje funkcja `decide()` w `jev_run.py`. Wynik, uzasadnienie i sklasyfikowane
+wejścia trafiają do dziennika w polu `decision`. Progi zmienia się opcjami `--yes` i `--no`.
 
 ## 5. Uruchomienie
 
@@ -144,8 +123,18 @@ TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --yes 0.8 
 ```
 
 Kody wyjścia: `0` – OK, `1` – błąd (walidacja, sieć, HTTP), `2` – TRIP, `3` – ALERT,
-`4` – SPRAWDŹ. Walidacja odrzuca payload bez któregoś z trzech pytań decyzyjnych.
+`4` – SPRAWDŹ. Walidacja odrzuca payload bez któregoś z pięciu pytań decyzyjnych noul
+lub bez skali `production_loss_level`.
 Dziennik `jev_log.jsonl` jest wykluczony z repozytorium (`.gitignore`).
+
+Test wariancji (warianty V4 i W1–W4, po 5 przebiegów, ok. 25 zapytań):
+
+```bash
+TYPESAFE_API_KEY=<klucz> python jev_variance_test.py
+```
+
+Wyniki trafiają do `jev_variance_raw.csv` i `jev_variance_summary.csv` (rozkłady
+zamiast średnich); oba pliki są wykluczone z repozytorium.
 
 ## 6. Lista kontrolna przed wysłaniem
 
@@ -160,8 +149,8 @@ Dziennik `jev_log.jsonl` jest wykluczony z repozytorium (`.gitignore`).
 
 ## 7. Wyniki odniesienia i test stabilności (26.10.2026, `jev-1.14.0`)
 
-Cztery wersje `state` opisujące ten sam stan faktyczny, przy tych samych pytaniach
-(`questions_sha256 = 71917c473bbd246d`):
+Cztery wersje `state` opisujące ten sam stan faktyczny, przy **poprzednim** zestawie
+pytań (`questions_sha256 = 71917c473bbd246d`, ze skalą `supply_stress_level`):
 
 | Wersja | Charakterystyka `state` |
 |---|---|
@@ -188,6 +177,54 @@ Wnioski:
 - Wszystkie wersje: reguła z sekcji 4 daje **OK**. Raport opisywał nasilone ataki przy
   utrzymanych przepływach (ok. 24 mln bbl/d wobec przedwojennych 23,3).
 - Liczby i przypisane im źródła pochodzą z raportu wejściowego; nie były weryfikowane.
+
+## 8. Test wariancji W1–W4 (27.10.2026, `jev-1.14.0`)
+
+Cztery hipotetyczne raporty z 28.10.2026, każdy uruchomiony 5 razy, oraz V4 (sekcja 2)
+jako kontrola regresji. Skrypt: `jev_variance_test.py`.
+
+| Wariant | Treść `state` | Oczekiwany wynik |
+|---|---|---|
+| V4 | stan wzorcowy z 26.10 | OK |
+| W1 | wybuch miny potwierdzony przez US 5th Fleet, przepływ 17 / 20,5 mln bbl/d | ALERT |
+| W2 | przepływ 12,3 / 20,5 mln bbl/d, część armatorów wstrzymała rejsy | ALERT |
+| W3 | Aramco potwierdza uszkodzenie Abqaiq (−5 mln bbl/d), tranzyt w normie | ALERT (reguła 7) |
+| W4 | rezolucja parlamentu Iranu bez decyzji Rady, obiekt na torze niepotwierdzony, przepływ −15% | ALERT |
+
+**Przebieg 1 – poprzedni zestaw pytań** (`71917c473bbd246d`, 20 przebiegów):
+
+| Wariant | Decyzja | Wada |
+|---|---|---|
+| W1 | ALERT ×5 | – |
+| W2 | **OK** ×5 | tabela nie uwzględniała spadku przepływów (stress = 3 był tylko pomocniczy) |
+| W3 | OK ×5 | `saudi_infrastructure_hit_confirmed` = 0,60–0,62 (pytanie wymieniało z nazwy tylko Yanbu, Rabigh i East-West); `supply_stress_level` rozdzielony między poziomy 0 (p ≈ 0,46) i 4 (p ≈ 0,30), średnia 1,65–2,04 |
+| W4 | **OK** ×5 | tabela nie uwzględniała spadku przepływów ani formalnych kroków |
+
+**Przebieg 2 – obecny zestaw pytań** (`1780910a27e1a438`, 25 przebiegów):
+
+| Wariant | halted | closure | mines | flow_drop | steps | saudi | shipping | production | Decyzja |
+|---|---|---|---|---|---|---|---|---|---|
+| V4 | 0,05 | 0,04 | 0,05 | 0,05 | 0,06–0,07 | 0,05 | 2 (p = 1,00) | 0 (p ≥ 0,99) | OK ×5 |
+| W1 | 0,06 | 0,10–0,11 | **0,94–0,95** | **0,94–0,97** | 0,05 | 0,04 | 3 (p = 1,00) | 0 (p ≈ 0,77) | ALERT ×5 |
+| W2 | 0,06–0,07 | 0,04 | 0,05 | **0,96–0,97** | 0,06 | 0,05 | 3 (p = 1,00) | 0 (p ≈ 0,94) | ALERT ×5 |
+| W3 | 0,03 | 0,03 | 0,03 | 0,07 | 0,04 | **0,94** | 0 (p = 1,00) | **4 (p = 1,00)** | OK ×5 → **ALERT** ×5 z regułą 7 |
+| W4 | 0,08–0,09 | 0,08–0,09 | 0,06–0,07 | **0,96** | **0,92–0,93** | 0,03–0,04 | 3 (p ≈ 0,98) | 0 (p = 1,00) | ALERT ×5 |
+
+Wnioski:
+
+- Decyzje są powtarzalne: 45 z 45 przebiegów dało w obrębie wariantu tę samą decyzję.
+  Odpowiedzi noul różnią się między powtórzeniami najwyżej o 0,03.
+- Rozdzielenie skali usunęło rozkład z dwoma maksimami w W3: żegluga 0, utrata mocy 4.
+  Ogólna kategoria obiektów w kryterium podniosła `saudi_infrastructure_hit_confirmed`
+  w W3 z 0,61 do 0,94.
+- V4 nadal daje OK, więc zmiany nie wprowadziły fałszywych alarmów dla stanu z 26.10.
+- W1: `production_loss_level` ma niewielką domieszkę poziomu 4 (p ≈ 0,16), bo spadek
+  przepływu przez cieśninę bywa odczytywany jako utrata mocy. Dominujący poziom 0 jest
+  poprawny; to kolejny powód, by czytać rozkład, a nie średnią (0,74–0,89).
+- W3 (potwierdzona utrata 5 mln bbl/d mocy przetwórczych przy normalnym tranzycie)
+  dawał OK, bo tabela obejmowała tylko cieśninę. Po dodaniu reguły 7 (sekcja 4) daje
+  **ALERT** ×5. Wynik ustalono, przeliczając zapisane 25 odpowiedzi przebiegu 2 nową
+  funkcją `decide()`, bez ponownych zapytań do API; decyzje V4, W1, W2 i W4 bez zmian.
 
 > Narzędzie ma charakter analityczny i edukacyjny. Wynik wspiera ocenę sytuacji,
 > nie zastępuje analizy eksperckiej ani oficjalnych komunikatów.

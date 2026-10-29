@@ -8,12 +8,14 @@ Użycie:
     python jev_run.py payload.json --dry-run        # walidacja bez wysyłki
     python jev_run.py payload.json --yes 0.7 --no 0.3 --log jev_log.jsonl
 
-Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key.
+Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key. W sesji Claude Code
+w chmurze z podłączonym TypeSafe klucz wstrzykuje proxy i żaden z nich nie jest potrzebny.
 Endpoint i autoryzacja zgodne z https://api.typesafe.ai/openapi.json
 (POST /v1/systemone, nagłówek "Authorization: Bearer <klucz>").
 
-Decyzję podejmuje tabela decyzyjna (decide) na podstawie trzech pytań typu noul;
-opis w WZOR_PYTANIA.md, sekcja 4.
+Decyzję podejmuje tabela decyzyjna (decide) na podstawie pięciu pytań typu noul
+i dominującego poziomu skali production_loss_level;
+opis w WZOR_PYTANIA.md, sekcja 4. Brzmienie pytań: jev_hormuz_template.json.
 
 Kody wyjścia: 0 — OK, 1 — błąd (walidacja, sieć, HTTP), 2 — TRIP, 3 — ALERT,
 4 — SPRAWDŹ (odpowiedź nierozstrzygnięta lub brakująca).
@@ -39,19 +41,34 @@ TZ = ZoneInfo("Europe/Warsaw")
 HALTED_KEY = "hormuz_transit_halted"
 CLOSURE_KEY = "immediate_closure_probability"
 MINES_KEY = "mines_confirmed"
-DECISION_KEYS = (HALTED_KEY, CLOSURE_KEY, MINES_KEY)
+FLOW_DROP_KEY = "flow_drop_significant"
+STEPS_KEY = "formal_closure_steps"
+DECISION_KEYS = (HALTED_KEY, CLOSURE_KEY, MINES_KEY, FLOW_DROP_KEY, STEPS_KEY)
+PRODUCTION_KEY = "production_loss_level"
+PRODUCTION_ALERT_LEVEL = 3   # utrata mocy rzędu 1 mln bbl/d i więcej
 
 EXIT_CODES = {"OK": 0, "TRIP": 2, "ALERT": 3, "SPRAWDŹ": 4}
 
 
 def load_key() -> str:
+    """Klucz z TYPESAFE_API_KEY lub ~/.typesafe/api_key; pusty, gdy brak obu."""
     key = os.environ.get("TYPESAFE_API_KEY")
     if key:
         return key.strip()
     path = Path.home() / ".typesafe" / "api_key"
     if path.exists():
         return path.read_text().strip()
-    sys.exit("Brak klucza: ustaw TYPESAFE_API_KEY lub ~/.typesafe/api_key")
+    return ""
+
+
+def auth_headers() -> dict:
+    """Nagłówki żądania. Bez klucza nie wysyła Authorization: w sesji w chmurze
+    klucz dodaje proxy, a poza nią API odpowie 401 z czytelnym komunikatem."""
+    headers = {"Content-Type": "application/json"}
+    key = load_key()
+    if key:
+        headers[AUTH_HEADER] = AUTH_PREFIX + key
+    return headers
 
 
 def canonical(value) -> str:
@@ -96,6 +113,11 @@ def validate(payload: dict) -> None:
                 errors.append(f"{key}: brak pytania wymaganego przez tabelę decyzyjną")
             elif q.get("type") != "noul":
                 errors.append(f"{key}: pytanie decyzyjne musi być typu 'noul'")
+        q = questions.get(PRODUCTION_KEY)
+        if q is None:
+            errors.append(f"{PRODUCTION_KEY}: brak pytania wymaganego przez tabelę decyzyjną")
+        elif q.get("type") != "score":
+            errors.append(f"{PRODUCTION_KEY}: pytanie musi być typu 'score'")
     if errors:
         sys.exit("Błędy walidacji:\n  - " + "\n  - ".join(errors))
 
@@ -131,10 +153,21 @@ def classify(p, yes: float, no: float) -> str:
     return "nierozstrzygnięte"
 
 
+def dominant_level(answer: dict):
+    """Poziom skali o najwyższym prawdopodobieństwie (nie średnia 'score')."""
+    probs = (answer or {}).get("probabilities")
+    if not probs:
+        return None
+    return int(max(probs, key=probs.get))
+
+
 def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
     """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca."""
     v = {k: classify(answers.get(k, {}).get("noul"), yes, no) for k in DECISION_KEYS}
     halted, closure, mines = v[HALTED_KEY], v[CLOSURE_KEY], v[MINES_KEY]
+    flow_drop, steps = v[FLOW_DROP_KEY], v[STEPS_KEY]
+    production = dominant_level(answers.get(PRODUCTION_KEY))
+    v[PRODUCTION_KEY] = production
     if halted == "tak":
         return "TRIP", "tranzyt wstrzymany", v
     if halted == "nie" and closure == "tak" and mines == "tak":
@@ -143,9 +176,15 @@ def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
         return "ALERT", "zapowiedź zamknięcia bez potwierdzenia min", v
     if halted == "nie" and closure == "nie" and mines == "tak":
         return "ALERT", "miny potwierdzone, brak zapowiedzi zamknięcia", v
+    if halted == "nie" and flow_drop == "tak":
+        return "ALERT", "wyraźny spadek przepływów bez wstrzymania tranzytu", v
+    if halted == "nie" and closure == "nie" and steps == "tak":
+        return "ALERT", "formalne kroki w kierunku zamknięcia bez decyzji", v
+    if production is not None and production >= PRODUCTION_ALERT_LEVEL:
+        return "ALERT", "duża utrata mocy wydobywczych lub przetwórczych", v
     if "nierozstrzygnięte" in v.values():
         return "SPRAWDŹ", "odpowiedź nierozstrzygnięta lub brakująca; uzupełnij state", v
-    return "OK", "brak przesłanek zamknięcia", v
+    return "OK", "brak przesłanek zamknięcia ani dużej utraty mocy", v
 
 
 def last_decision(log: Path):
@@ -183,12 +222,13 @@ def main() -> None:
     try:
         r = requests.post(
             API_URL,
-            headers={AUTH_HEADER: AUTH_PREFIX + load_key(),
-                     "Content-Type": "application/json"},
-            json=payload, timeout=60,
+            headers=auth_headers(), json=payload, timeout=60,
         )
     except requests.RequestException as e:
         sys.exit(f"Błąd połączenia: {e}")
+    if r.status_code == 401:
+        sys.exit("HTTP 401: brak lub zły klucz. Ustaw TYPESAFE_API_KEY albo uruchom w sesji "
+                 "Claude Code ze środowiskiem, w którym TypeSafe jest podłączony.")
     if r.status_code != 200:
         sys.exit(f"HTTP {r.status_code}: {r.text[:500]}")
     resp = r.json()

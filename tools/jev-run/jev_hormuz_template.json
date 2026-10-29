@@ -1,0 +1,76 @@
+{
+  "model": "jev-latest",
+  "state": "Stan na DD.MM.RRRR <pora>. <fakty według WZOR_PYTANIA.md, sekcja 2>",
+  "questions": {
+    "immediate_closure_probability": {
+      "type": "noul",
+      "instructions": "Czy według raportu Iran ogłosił zamknięcie Cieśniny Ormuz dla żeglugi handlowej albo przystąpił do jej blokowania?",
+      "criteria": {
+        "true": "Raport podaje oficjalną zapowiedź zamknięcia cieśniny lub działania, które ją blokują, np. potwierdzone postawienie zapór minowych na torach wodnych.",
+        "false": "Raport opisuje ataki na pojedyncze statki i niepotwierdzone doniesienia, a statki nadal przepływają przez cieśninę."
+      }
+    },
+    "hormuz_transit_halted": {
+      "type": "noul",
+      "instructions": "Czy według raportu tranzyt ropy przez Cieśninę Ormuz jest obecnie faktycznie wstrzymany?",
+      "criteria": {
+        "true": "Przepływy ropy przez cieśninę spadły niemal do zera.",
+        "false": "Tankowce nadal przepływają, a wolumen eksportu utrzymuje się, mimo ataków na statki."
+      }
+    },
+    "mines_confirmed": {
+      "type": "noul",
+      "instructions": "Czy raport podaje potwierdzone postawienie min morskich w Cieśninie Ormuz?",
+      "criteria": {
+        "true": "Miny zostały potwierdzone, np. przez marynarkę wojenną lub wskutek wybuchu miny na statku.",
+        "false": "Raport wspomina jedynie o doniesieniach lub podejrzeniach dotyczących min."
+      }
+    },
+    "flow_drop_significant": {
+      "type": "noul",
+      "instructions": "Czy według raportu przepływ ropy przez Cieśninę Ormuz jest co najmniej o 10% niższy niż przed wojną?",
+      "criteria": {
+        "true": "Raport podaje przepływ lub eksport przez cieśninę niższy o 10% lub więcej od poziomu przedwojennego.",
+        "false": "Przepływ jest na poziomie przedwojennym, wyższy albo niższy o mniej niż 10%."
+      }
+    },
+    "formal_closure_steps": {
+      "type": "noul",
+      "instructions": "Czy według raportu organy państwowe Iranu podjęły formalne kroki w kierunku zamknięcia Cieśniny Ormuz, choć decyzja o zamknięciu nie zapadła?",
+      "criteria": {
+        "true": "Organ państwowy Iranu przyjął uchwałę, projekt lub rekomendację zamknięcia cieśniny, a wiążąca decyzja nie została podjęta.",
+        "false": "Raport nie wspomina o takich krokach albo przytacza jedynie wypowiedzi pojedynczych polityków lub komentatorów."
+      }
+    },
+    "saudi_infrastructure_hit_confirmed": {
+      "type": "noul",
+      "instructions": "Czy raport podaje potwierdzone uszkodzenie saudyjskiej infrastruktury naftowej na lądzie?",
+      "criteria": {
+        "true": "Uszkodzenie lądowego obiektu naftowego w Arabii Saudyjskiej (zakładu przetwórczego, terminalu, rurociągu lub rafinerii) potwierdziła strona saudyjska albo niezależne źródło.",
+        "false": "Raport zawiera tylko deklaracje atakującego, których strona saudyjska nie potwierdza, albo nie wspomina o uszkodzeniach infrastruktury lądowej."
+      }
+    },
+    "shipping_disruption_level": {
+      "type": "score",
+      "instructions": "Jak bardzo według raportu zakłócona jest żegluga i przepływ ropy przez Cieśninę Ormuz?",
+      "criteria": [
+        "Ataki na statki ustały, a przepływy ropy przez cieśninę są w normie.",
+        "Zdarzają się sporadyczne incydenty, a przepływy ropy przez cieśninę są w normie.",
+        "Statki są regularnie atakowane, przepływy utrzymane, rosną koszty frachtu i ubezpieczeń.",
+        "Przepływy ropy przez cieśninę wyraźnie spadły względem okresu przedwojennego.",
+        "Tranzyt ropy przez cieśninę jest faktycznie wstrzymany."
+      ]
+    },
+    "production_loss_level": {
+      "type": "score",
+      "instructions": "Jak duża jest według raportu utrata mocy wydobywczych lub przetwórczych ropy w państwach Zatoki Perskiej?",
+      "criteria": [
+        "Raport nie podaje żadnej utraty mocy wydobywczych ani przetwórczych.",
+        "Raport podaje krótkie przestoje pojedynczych instalacji bez wpływu na wolumen produkcji.",
+        "Raport podaje utratę mocy rzędu kilkuset tysięcy baryłek dziennie.",
+        "Raport podaje utratę mocy rzędu 1–3 mln baryłek dziennie.",
+        "Raport podaje utratę mocy powyżej 3 mln baryłek dziennie."
+      ]
+    }
+  }
+}
