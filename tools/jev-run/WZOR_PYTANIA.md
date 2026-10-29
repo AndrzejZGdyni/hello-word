@@ -112,6 +112,13 @@ Wskaźniki pomocnicze (nie wchodzą do tabeli, pokazują tło i trend):
 Tabelę realizuje funkcja `decide()` w `jev_run.py`. Wynik, uzasadnienie i sklasyfikowane
 wejścia trafiają do dziennika w polu `decision`. Progi zmienia się opcjami `--yes` i `--no`.
 
+**Ocena analityka (`--override`).** Gdy analityk rozstrzyga pytanie decyzyjne inaczej niż
+model, np. uznaje komunikat IMO za potwierdzenie min, podaje to jawnie:
+`--override mines_confirmed=tak`. Odpowiedź modelu i progi pozostają bez zmian; dziennik
+zapisuje w `decision.overrides` ocenę analityka, klasyfikację modelu i wartość noul,
+a na ekranie widać też wynik bez ocen analityka. Nie zastępuj tej opcji obniżaniem progów
+ani przeredagowaniem `state` pod oczekiwaną odpowiedź.
+
 ## 5. Uruchomienie
 
 ```bash
@@ -120,6 +127,8 @@ python jev_run.py jev_hormuz_RRRR-MM-DD.json --dry-run   # walidacja
 TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --log jev_log.jsonl
 # progi inne niż domyślne 0,7 / 0,3:
 TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --yes 0.8 --no 0.2
+# ocena analityka dla pytania decyzyjnego (można podać kilka razy):
+TYPESAFE_API_KEY=<klucz> python jev_run.py jev_hormuz_RRRR-MM-DD.json --override mines_confirmed=tak
 ```
 
 Kody wyjścia: `0` – OK, `1` – błąd (walidacja, sieć, HTTP), `2` – TRIP, `3` – ALERT,

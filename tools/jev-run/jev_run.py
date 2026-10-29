@@ -7,6 +7,7 @@ Użycie:
     python jev_run.py jev_hormuz_2026-10-26.json
     python jev_run.py payload.json --dry-run        # walidacja bez wysyłki
     python jev_run.py payload.json --yes 0.7 --no 0.3 --log jev_log.jsonl
+    python jev_run.py payload.json --override mines_confirmed=tak   # ocena analityka
 
 Klucz API: zmienna TYPESAFE_API_KEY lub plik ~/.typesafe/api_key. W sesji Claude Code
 w chmurze z podłączonym TypeSafe klucz wstrzykuje proxy i żaden z nich nie jest potrzebny.
@@ -161,9 +162,24 @@ def dominant_level(answer: dict):
     return int(max(probs, key=probs.get))
 
 
-def decide(answers: dict, yes: float, no: float) -> tuple[str, str, dict]:
-    """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca."""
+def parse_overrides(items: list[str]) -> dict:
+    """'klucz=tak|nie' -> {klucz: wartość}; tylko pytania decyzyjne noul."""
+    out = {}
+    for item in items:
+        key, sep, val = item.partition("=")
+        if not sep or key not in DECISION_KEYS or val not in ("tak", "nie"):
+            sys.exit(f"--override {item!r}: oczekiwano KLUCZ=tak|nie, "
+                     f"KLUCZ jeden z: {', '.join(DECISION_KEYS)}")
+        out[key] = val
+    return out
+
+
+def decide(answers: dict, yes: float, no: float,
+           overrides: dict | None = None) -> tuple[str, str, dict]:
+    """Tabela decyzyjna; reguły sprawdzane od góry, wygrywa pierwsza pasująca.
+    overrides: oceny analityka zastępujące klasyfikację odpowiedzi modelu."""
     v = {k: classify(answers.get(k, {}).get("noul"), yes, no) for k in DECISION_KEYS}
+    v.update(overrides or {})
     halted, closure, mines = v[HALTED_KEY], v[CLOSURE_KEY], v[MINES_KEY]
     flow_drop, steps = v[FLOW_DROP_KEY], v[STEPS_KEY]
     production = dominant_level(answers.get(PRODUCTION_KEY))
@@ -207,10 +223,14 @@ def main() -> None:
     ap.add_argument("--log", default="jev_log.jsonl")
     ap.add_argument("--yes", type=float, default=0.7, help="próg 'tak' dla noul")
     ap.add_argument("--no", type=float, default=0.3, help="próg 'nie' dla noul")
+    ap.add_argument("--override", action="append", default=[], metavar="KLUCZ=tak|nie",
+                    help="ocena analityka dla pytania decyzyjnego; zapisywana w dzienniku "
+                         "obok odpowiedzi modelu (można podać kilka razy)")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     if not (0 <= args.no < args.yes <= 1):
         sys.exit("Progi muszą spełniać 0 <= --no < --yes <= 1")
+    overrides = parse_overrides(args.override)
 
     payload = json.loads(Path(args.payload).read_text(encoding="utf-8"))
     payload.setdefault("model", "jev-latest")
@@ -236,7 +256,8 @@ def main() -> None:
 
     log = Path(args.log)
     prev = last_decision(log)
-    result, reason, inputs = decide(answers, args.yes, args.no)
+    model_inputs = decide(answers, args.yes, args.no)[2]
+    result, reason, inputs = decide(answers, args.yes, args.no, overrides)
     record = {
         "timestamp": datetime.now(TZ).isoformat(timespec="seconds"),
         "model": resp.get("model", payload["model"]),
@@ -247,7 +268,10 @@ def main() -> None:
             json.dumps(payload["questions"], sort_keys=True).encode()).hexdigest()[:16],
         "answers": answers,
         "decision": {"result": result, "reason": reason, "inputs": inputs,
-                     "thresholds": {"yes": args.yes, "no": args.no}},
+                     "thresholds": {"yes": args.yes, "no": args.no},
+                     "overrides": {k: {"analityk": val, "model": model_inputs[k],
+                                       "noul": answers.get(k, {}).get("noul")}
+                                   for k, val in overrides.items()}},
         "usage": resp.get("usage"),
         "raw": resp,
     }
@@ -260,7 +284,15 @@ def main() -> None:
 
     print(f"\nTabela decyzyjna (tak >= {args.yes:.2f}, nie <= {args.no:.2f}):")
     for key, val in inputs.items():
-        print(f"  {key}: {val}")
+        note = ""
+        if key in overrides:
+            note = (f"  ← ocena analityka (model: {model_inputs[key]}, "
+                    f"noul={answers.get(key, {}).get('noul')})")
+        print(f"  {key}: {val}{note}")
+    if overrides and model_inputs != inputs:
+        model_result = decide(answers, args.yes, args.no)[0]
+        if model_result != result:
+            print(f"Wynik bez ocen analityka: {model_result}")
     print(f"Wynik: {result} – {reason}")
     if prev:
         print(f"Poprzednio: {prev[0]} ({prev[1]})")
