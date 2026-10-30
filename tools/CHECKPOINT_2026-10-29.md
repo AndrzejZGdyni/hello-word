@@ -1,4 +1,4 @@
-# Checkpoint – 29.10.2026
+# Checkpoint – stan na 30.10.2026 (utworzono 29.10.2026)
 
 Podsumowanie pracy z modelem Jev (TypeSafe System One) do wklejenia na początek nowego
 wątku. Instrukcja uruchamiania: [`CLAUDE.md`](../CLAUDE.md).
@@ -20,6 +20,14 @@ wątku. Instrukcja uruchamiania: [`CLAUDE.md`](../CLAUDE.md).
 - Klucz API dodaje środowisko chmurowe z podłączonym TypeSafe. Payload z innymi pytaniami
   niż w szablonach wysyła się bezpośrednio do API (`CLAUDE.md`).
 
+## Inne narzędzia Jev w repozytorium (osobny wątek)
+
+- `tools/jev-centrowka/`, `tools/jev-lozysko/`, `tools/jev-luzy/`, `tools/jev-niewywazenie/`:
+  diagnostyka wibroakustyczna maszyn na danych syntetycznych (ćwiczenie edukacyjne);
+  zbiorcze podsumowanie w `tools/raport-zbiorczy.md`.
+- `tools/jev-ekg/`: ćwiczenie edukacyjne – ocena EKG z obrazu, opis we własnym `README.md`.
+- Niezwiązane z analizą Ormuzu/zimy; nie wymagają działania przy kontynuacji tego checkpointu.
+
 ## Ostatnie wyniki (`jev-1.14.0`)
 
 | Data | Analiza | Wynik |
@@ -27,9 +35,10 @@ wątku. Instrukcja uruchamiania: [`CLAUDE.md`](../CLAUDE.md).
 | 29.10 | Ormuz | model: **ALERT** – Iran ogłosił zamknięcie cieśniny (0,91), przepływ ok. 82% przedwojennego (0,97), miny 0,65–0,69. Z oceną analityka (komunikat IMO = potwierdzenie min): **TRIP** |
 | 29.10 | Zima (szablon) | model: **ALERT** (węgiel 0,83). Z oceną analityka `coal_unavailable=nie`: **UWAGA** – ryzyko rozbicia wiru polarnego (0,95) |
 | 29.10 | Zima, tylko meteorologia | listopad powyżej normy; grudzień–luty w normie (IMGW; C3S przewiduje cieplej); możliwe mrozy w listopadzie (ok. 10–11.11 lub ostatnia dekada); luty z opadami i śniegiem; wysoka niepewność prognoz |
+| 30.10 | Ormuz | model: **OK** – wyraźna deeskalacja względem 29.10: wszystkie pytania decyzyjne „nie" z wysoką pewnością (0,04–0,06), `shipping_disruption_level` 2/4 (pewność 1,0: ataki trwają, przepływy utrzymane, rosną koszty), `production_loss_level` 0/4 (pewność 1,0: brak zgłoszonej utraty mocy wg Saudi Aramco). Dwa przebiegi tego dnia (własny `state` i `state` od Gemini, identyczny zestaw 8 pytań) dały ten sam wynik OK, różnice w `noul` ≤ 0,02 |
 
 Liczby i fakty w raportach pochodzą głównie z mediów streszczających komunikaty IMGW, C3S,
-NOAA, PGG, PSE, Kpler, IMO i CENTCOM; nie były weryfikowane u źródła.
+NOAA, PGG, PSE, Kpler, IMO, CENTCOM, UKMTO i Saudi Aramco; nie były weryfikowane u źródła.
 
 ## Ustalenia metodyczne
 
@@ -40,11 +49,17 @@ NOAA, PGG, PSE, Kpler, IMO i CENTCOM; nie były weryfikowane u źródła.
 - Odpowiedź tuż przy progu rozstrzyga analityk przez `--override`, nie przez obniżenie progów
   ani przeredagowanie `state`.
 - Skale ocenia się po rozkładzie `probabilities`, nie po średniej `score`.
+- Przed uruchomieniem payloadu z innego źródła (np. innego modelu) porównać zestaw pytań
+  z kanonicznym szablonem programowo (nie "na oko") – 30.10 payload od Gemini początkowo
+  używał wycofanej skali `supply_stress_level` zamiast `shipping_disruption_level` +
+  `production_loss_level`; drugi przebieg po poprawce dał identyczny `questions_sha256`
+  i wynik zgodny z własnym `state`.
 
 ## Do powtórzenia po 10.11.2026
 
 - Nowe prognozy C3S i IMGW; rozwój sytuacji z wirem polarnym.
-- Ormuz: przepływ przez cieśninę, potwierdzenia min, stanowiska Iranu i CENTCOM.
+- Ormuz: czy deeskalacja z 30.10 się utrzymuje (przepływ, potwierdzenia min, stanowiska
+  Iranu i CENTCOM) czy to chwilowe wyciszenie.
 
-> Dzienniki i payloady z sesji 26–29.10 nie są w repozytorium (repozytorium jest
+> Dzienniki i payloady z sesji 26–30.10 nie są w repozytorium (repozytorium jest
 > publiczne); tabela wyników powyżej jest ich podsumowaniem.
