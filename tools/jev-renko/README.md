@@ -1,123 +1,153 @@
-# Jev – decyzja KUP / SPRZEDAJ / CZEKAJ dla wykresów Renko
+# Jev – status CZEKAĆ / ARM / FIRE dla wykresów Renko (D1, H1, M5)
 
-Ocena opisu wykresów Renko z trzech interwałów (D1, H1, M5) modelem Jev
-(TypeSafe System One). Zbudowane na wzór `../jev-zima/`: Jev odpowiada na pojedyncze
-pytania o opis wykresów w `state`, decyzję wyznacza tabela decyzyjna w kodzie
-(`decide()` w `jev_renko.py`).
+Ocena wykresów Renko z trzech interwałów według profilu handlowego **R11 2.4-trading-r3**
+(reguły `dyscyplina_wykonania`). Podział pracy:
 
-> **Narzędzie interpretuje zestaw wskaźników; nie jest rekomendacją inwestycyjną.**
-> CFD to instrumenty z dźwignią; większość rachunków detalicznych traci na nich pieniądze.
-> Skuteczność reguł nie została sprawdzona na danych historycznych.
+- **Jev** (TypeSafe System One) odpowiada na pytania **opisowe** o wykresy w `state`:
+  trend D1 / H1 / M5, kolor ostatniej zamkniętej cegły M5, ostrzeżenia.
+- **Kod** (`decide()` w `jev_renko.py`) liczy reguły **liczbowe** profilu z pola `dane`:
+  limit dnia, bramka konfluencji, wyzwalacz (%R, SAR), okno płynności, %B, filtr makro,
+  ryzyko i RR po kosztach, lot.
+- **Rejestr** (`rejestr.py`) prowadzi rejestr transakcji i liczy licznik dnia;
+  `jev_renko.py` dopisuje rejestr blokad.
 
-## 1. Zasada działania
+> **Analiza edukacyjna; nie stanowi porady inwestycyjnej.** CFD to instrumenty lewarowane
+> wysokiego ryzyka; znaczna większość rachunków detalicznych traci kapitał. Skuteczność
+> reguł nie została sprawdzona na danych historycznych – służy temu rejestr.
 
-- **Kierunek z D1 i H1, wejście z M5.** Sprzedaż tylko przy trendzie spadkowym na D1
-  i H1 oraz sygnale na M5; kupno symetrycznie. W pozostałych przypadkach CZEKAJ.
-- **Trend tylko z zamkniętych cegieł.** Tymczasowe (żółte) cegły zmieniają się do końca
-  interwału, dlatego służą wyłącznie jako ostrzeżenie (pytania `h1_provisional_*`,
-  `m5_provisional_*`).
-- **Bez wejścia po dużym ruchu.** Sygnał sprzedaży przy skrajnym wyprzedaniu H1
-  (albo kupna przy skrajnym wykupieniu) daje CZEKAJ.
-- **Jev ocenia opis, nie rynek.** Wynik 0,5 oznacza, że opis nie rozstrzyga pytania,
-  a nie 50% szans na ruch ceny.
+## 1. Kolejność reguł
 
-## 2. Jak przygotować `state`
+| # | Reguła profilu | Źródło | Skutek |
+|---|---|---|---|
+| 0 | Limit dnia: 2 zamknięte straty z rzędu lub wynik ≤ −2,6% (breakeven < 0,1% neutralny) | rejestr | **SESJA ZAKOŃCZONA** |
+| 1 | Kierunek nadrzędny z D1 (zakaz BUY przy SELL D1 i odwrotnie) | Jev | brak kierunku → **CZEKAĆ** |
+| 2 | Bramka konfluencji: ≥ 2/3 interwałów zgodnych z D1 | Jev | < 2/3 → **CZEKAĆ** |
+| 3 | Wyzwalacz M5: nowy blok w kierunku D1 [Jev] + SELL %R < −30 i SAR nad ceną / BUY %R > −70 i SAR pod ceną [kod] | Jev + kod | brak → **ARM** |
+| 4 | Checklista FIRE: [1] wyzwalacz, [2] okno 08:00–23:00 Europe/Warsaw, [3] ryzyko ≤ 1,3% po kosztach, [4] RR ≥ 1,8 po kosztach, [5] %B M5 (SHORT zakazany < 0,05, LONG > 0,95) | kod | NIE → **ARM** + wpis BLOKADA; brak danych → **ARM** |
+| 4a | Filtr makro ±15 min od zdarzenia o wysokim wpływie | kod (`dane.makro`) | blokada → **ARM**; brak listy → status „nieznany [E]” |
+| 5 | Wszystko TAK | – | **FIRE SELL / FIRE BUY** |
 
-Dla każdego interwału (D1, H1, M5) podaj fakty odczytane z wykresu:
+**Ostrzeżenia (nie blokują):** H1 skrajnie wyprzedany / wykupiony oraz cegły tymczasowe
+przeciw kierunkowi. Profil ich nie zawiera, a meta-reguła `przeglad_okresowy` dopuszcza
+nową regułę blokującą tylko z incydentem lub danymi z rejestru – dlatego są wyłącznie
+wyświetlane i zapisywane w dzienniku.
+
+**Ryzyko i RR po kosztach** (bramka 4, filtr 6): realny dystans ryzyka = |SL − entry| + spread;
+RR = |TP − entry| / realny dystans; lot = budżet (kapitał × min(ryzyko %, 1,3%)) ÷
+(dystans × wartość punktu), zaokrąglony w dół do kroku, nie mniej niż lot minimalny.
+Gdy lot minimalny przekracza 1,3% – blokada „ryzyko”. „Świadomie poza oknem”
+(`swiadomie_poza_oknem: true`) dopuszcza wejście poza oknem z lotem minimalnym.
+
+## 2. Jak przygotować payload
+
+Skopiuj `renko_template.json`, wypełnij `state` (dla Jev) i `dane` (dla kodu; **nie są
+wysyłane do Jev**).
+
+**`state` – fakty z wykresów, dla każdego interwału.** Etykiety przy osi cen: **biała** –
+poziom zamknięcia ostatniej zatwierdzonej cegły, **żółta** – bieżąca wartość cegły
+tymczasowej (bieżąca cena), **„+N”** – liczba cegieł tymczasowych.
 
 | Element | Przykład | Uwagi |
 |---|---|---|
-| Data, godzina, instrument | „Stan na 12.11.2026 19:05. Instrument: GOLD.” | Zawsze na początku |
-| Wielkość cegły | „cegła ok. 15 pkt (ATR 14)” | |
-| Cegły zamknięte | „seria czerwonych od 10.11; ostatnia zamknięta 3 872,58 (czerwona)” | Kolor i kierunek serii |
-| Cegły tymczasowe | „bieżąca tymczasowa cegła 3 877,90” | Wartość z żółtej etykiety |
-| Średnia krocząca, Parabolic SAR | „Średnia 4 003,92. SAR 3 962,33.” | Liczby, bez oceny „nad / pod” |
-| MACD, AO | „MACD poniżej sygnału, histogram -17,07; AO -125,82, czerwone” | |
-| Williams %R, Fisher, BB %B | „%R -100. Fisher -7,23, sygnał -6,86. %B 0,06.” | Kierunek Fishera i przecięcia |
+| Data, godzina, instrument | „Stan na 12.11.2026 21:50. Instrument: GOLD.” | Zawsze na początku |
+| Wielkość cegły | „cegła 12,6 pkt (ATR 14)” | Platforma przelicza ATR – wielkość się zmienia |
+| Cegły zamknięte | „seria czerwonych od 10.11; ostatnia zamknięta 3 880,80 (czerwona)” | Kolor ostatniej cegły |
+| Cegły tymczasowe | „bieżąca wartość 3 878,19 (różnica -2,61 pkt, czyli 0,21 cegły)” | **Zawsze podawaj różnicę w punktach i ułamku cegły** |
+| Średnia, SAR, MACD, AO, %R, Fisher, %B | „Średnia 3 987,90. SAR 3 947,06. %R -100.” | Liczby, bez ocen |
 
-Nie dodawaj własnych wniosków („trend spadkowy”, „dobry moment”). Zrzuty rób tuż po
-zamknięciu interwału; zakryj saldo i numer rachunku.
+Nie dodawaj własnych wniosków („trend spadkowy”, „dobry moment”).
 
-## 3. Pytania
+**`dane` – liczby dla reguł kodu:**
 
-Brzmienie pytań jest w **`renko_template.json`**. Przy każdej ocenie skopiuj plik
-i zmień tylko `state`.
+| Pole | Znaczenie | Potrzebne do |
+|---|---|---|
+| `instrument`, `czas` | „GOLD”, „RRRR-MM-DD GG:MM” Europe/Warsaw | okno płynności, makro, licznik dnia |
+| `m5_pctB`, `m5_pctR`, `m5_sar`, `m5_cena` | odczyty M5; `m5_cena` = żółta etykieta | filtr %B, wyzwalacz |
+| `entry`, `sl`, `tp`, `spread` | planowane poziomy i spread [U] | ryzyko, RR |
+| `kapital`, `ryzyko_proc`, `wartosc_punktu`, `lot_min`, `lot_krok` | kapitał wolny (PLN), ryzyko % (1,0–1,3), PLN za 1 pkt przy 1 locie | lot, ryzyko |
+| `makro` | lista `{"czas": "RRRR-MM-DD GG:MM", "nazwa": "CPI USA"}` lub `null` | filtr makro |
+| `swiadomie_poza_oknem` | `true` tylko przy jawnej deklaracji tradera | wyjątek od okna płynności |
+
+Brak pól nie przerywa analizy: status pozostaje ARM z informacją, czego brakuje
+(kalkulacja lota bez kapitału i ryzyka jest niedopuszczalna).
+
+## 3. Pytania do Jev
+
+Brzmienie pytań jest w **`renko_template.json`**.
 
 | Pytanie | Co sprawdza |
 |---|---|
-| `d1_bearish`, `d1_bullish` | trend D1: co najmniej 2 z 3 (seria cegieł, cena a średnia, SAR) |
-| `h1_bearish`, `h1_bullish` | to samo dla H1 |
-| `m5_sell_trigger`, `m5_buy_trigger` | zamknięta cegła w kierunku wejścia oraz przecięcie Fishera albo odwrócenie SAR |
-| `h1_oversold_extreme` | %R ≤ -95 oraz Fisher < -4 albo %B < 0,10 |
-| `h1_overbought_extreme` | %R ≥ -5 oraz Fisher > 4 albo %B > 0,90 |
-| `h1_provisional_up`, `h1_provisional_down` | kierunek tymczasowych cegieł na H1 |
-| `m5_provisional_up`, `m5_provisional_down` | kierunek tymczasowych cegieł na M5 |
+| `d1_/h1_/m5_bearish`, `d1_/h1_/m5_bullish` | trend: co najmniej 2 z 3 (seria cegieł, cena a średnia, SAR) |
+| `m5_sell_trigger`, `m5_buy_trigger` | czy ostatnia zamknięta cegła M5 jest nowym blokiem SELL / BUY |
+| `h1_oversold_extreme`, `h1_overbought_extreme` | ostrzeżenie: skrajne oscylatory H1 |
+| `h1_/m5_provisional_up`, `h1_/m5_provisional_down` | ostrzeżenie: cegła tymczasowa odbiega od zamkniętej o ≥ pół cegły |
 
-## 4. Tabela decyzyjna
+**Ocena analityka (`--override`).** Gdy rozstrzygasz pytanie inaczej niż model, np.
+`--override m5_sell_trigger=nie`. Dziennik zapisuje obie oceny, ekran pokazuje też status
+bez oceny analityka.
 
-Progi noul: **≥ 0,7 = tak**, **≤ 0,3 = nie**, pomiędzy = nierozstrzygnięte.
-Wiersze sprawdzane od góry; wygrywa pierwszy pasujący. Kupno działa symetrycznie
-do sprzedaży (`*_bullish`, `m5_buy_trigger`, `h1_overbought_extreme`, `*_provisional_down`).
-
-| # | Warunek | Wynik |
-|---|---|---|
-| 1 | trend jednocześnie spadkowy i wzrostowy na D1 i H1 | **SPRAWDŹ** |
-| 2 | `d1_bearish` i `h1_bearish` = tak, `m5_sell_trigger` = nie | **CZEKAJ** – brak sygnału na M5 |
-| 3 | jak 2, ale `m5_sell_trigger` nierozstrzygnięte | **SPRAWDŹ** |
-| 4 | jak 2, `m5_sell_trigger` = tak, `h1_oversold_extreme` = tak | **CZEKAJ** – H1 skrajnie wyprzedany |
-| 5 | jak 4, ale `h1_provisional_up` lub `m5_provisional_up` = tak | **CZEKAJ** – tymczasowe cegły przeciw |
-| 6 | jak 4, ale wyprzedanie lub cegły tymczasowe nierozstrzygnięte | **SPRAWDŹ** |
-| 7 | trend spadkowy D1+H1, sygnał M5, brak przeszkód | **SPRZEDAJ** |
-| 8 | wiersze 2–7 dla trendu wzrostowego | **CZEKAJ / SPRAWDŹ / KUP** |
-| 9 | trend D1 lub H1 nierozstrzygnięty | **SPRAWDŹ** |
-| 10 | pozostałe (D1 i H1 bez wspólnego kierunku) | **CZEKAJ** |
-
-**Ocena analityka (`--override`).** Gdy rozstrzygasz pytanie inaczej niż model, podaj to
-jawnie, np. `--override m5_sell_trigger=nie`. Dziennik zapisuje ocenę analityka obok
-odpowiedzi modelu, a na ekranie widać też wynik bez tej oceny.
-
-## 5. Uruchomienie
+## 4. Uruchomienie
 
 ```bash
 cd tools/jev-renko
 python jev_renko.py renko_RRRR-MM-DD_GGMM.json --dry-run
-TYPESAFE_API_KEY=<klucz> python jev_renko.py renko_RRRR-MM-DD_GGMM.json --log renko_log.jsonl
-TYPESAFE_API_KEY=<klucz> python test_wariantow.py   # 5 wariantów × 2 przebiegi
+python jev_renko.py renko_RRRR-MM-DD_GGMM.json --log renko_log.jsonl \
+    --rejestr renko_rejestr.jsonl --blokady renko_blokady.jsonl
+python rejestr.py dodaj --plik renko_rejestr.jsonl --czas "2026-11-12 22:40" --instr GOLD \
+    --kier S --wejscie FIRE --kapital <PLN> --wynik-pln <±PLN> [--rr-plan --rr-real ...]
+python rejestr.py licznik --plik renko_rejestr.jsonl --dzien 2026-11-12
+python test_offline.py      # 27 testów reguł i rejestru, bez Jev
+python test_wariantow.py    # 9 wariantów × 2 przebiegi z Jev
 ```
 
-Kody wyjścia: `0` CZEKAJ, `1` błąd, `2` SPRZEDAJ, `3` KUP, `4` SPRAWDŹ.
-`TYPESAFE_API_KEY` jest potrzebny tylko poza sesją Claude Code w chmurze.
-Pliki `renko_log.jsonl` i `renko_warianty.csv` są wykluczone z repozytorium.
+Kody wyjścia `jev_renko.py`: `0` CZEKAĆ, `1` błąd, `2` FIRE SELL, `3` FIRE BUY,
+`4` SPRAWDŹ, `5` ARM, `6` SESJA ZAKOŃCZONA. `TYPESAFE_API_KEY` jest potrzebny tylko poza
+sesją Claude Code w chmurze.
 
-## 6. Test wariantów (12.11.2026, `jev-1.14.0`, pytania o cegły tymczasowe osobno dla H1 i M5)
+Wpisy BLOKADA i REJESTR są drukowane w formacie wklejki profilu. **Pliki
+`renko_log.jsonl`, `renko_rejestr.jsonl`, `renko_blokady.jsonl` i `renko_warianty.csv`
+zawierają dane rachunku i są wykluczone z repozytorium** (repozytorium jest publiczne).
+Filtr makro nie pobiera kalendarza sam – listę zdarzeń trzeba podać w `dane.makro`.
 
-| Wariant | Treść `state` | Oczekiwany | Otrzymany |
+## 5. Test wariantów (12.11.2026, `jev-1.14.0`)
+
+R1 i R8 to rzeczywiste odczyty GOLD z 12.11.2026 (bez danych rachunku); pozostałe są
+syntetyczne, z fikcyjnym kapitałem i wartością punktu.
+
+| Wariant | Treść | Oczekiwany | Otrzymany |
 |---|---|---|---|
-| R1 | rzeczywisty odczyt GOLD 19:05: D1 i H1 w dół, H1 skrajnie wyprzedany, odbicie na M5 | CZEKAJ | CZEKAJ ×2 |
-| R2 | trend spadkowy D1+H1, nowa czerwona cegła M5 po odbiciu, H1 bez skrajności | SPRZEDAJ | SPRZEDAJ ×2 |
-| R3 | lustrzane odbicie R2 dla trendu wzrostowego | KUP | KUP ×2 |
-| R4 | jak R2, ale H1 skrajnie wyprzedany (%R -100, Fisher -6,2, %B 0,04) | CZEKAJ | CZEKAJ ×2 |
-| R5 | D1 wzrostowy, H1 spadkowy | CZEKAJ | CZEKAJ ×2 |
+| R1 | GOLD 19:05: D1, H1, M5 w dół, ostatnia cegła M5 zielona (odbicie) | ARM | ARM ×2 |
+| R2 | trend spadkowy 3/3, nowy blok SELL M5, %R -45, SAR nad ceną, RR 2,4 | FIRE SELL | FIRE SELL ×2 |
+| R3 | lustrzane odbicie R2 dla BUY | FIRE BUY | FIRE BUY ×2 |
+| R4 | jak R2, H1 skrajnie wyprzedany | FIRE SELL (z ostrzeżeniem) | FIRE SELL ×2 |
+| R5 | D1 wzrostowy, H1 i M5 spadkowe (konfluencja BUY 1/3) | CZEKAĆ | CZEKAĆ ×2 |
+| R6 | jak R2, cegła tymczasowa H1 +0,03 cegły | FIRE SELL | FIRE SELL ×2 |
+| R7 | jak R2, cegła tymczasowa M5 +0,88 cegły | FIRE SELL (z ostrzeżeniem) | FIRE SELL ×2 |
+| R8 | GOLD 21:50: D1, H1 w dół, M5 w odbiciu (konfluencja 2/3) | ARM | ARM ×2 |
+| R9 | jak R2, ale %R -20 (wyzwalacz niepełny) | ARM | ARM ×2 |
 
 Kluczowe odpowiedzi (zakres z dwóch przebiegów):
 
-| Wariant | d1_bear | h1_bear | m5_sell | m5_buy | h1_oversold | h1_prov_up | h1_prov_down | m5_prov_up | m5_prov_down |
-|---|---|---|---|---|---|---|---|---|---|
-| R1 | **0,76–0,78** | **0,98** | 0,05–0,06 | **0,90–0,91** | **0,97** | **0,95** | 0,07 | 0,07 | **0,96** |
-| R2 | **0,97** | **0,96** | **0,96** | 0,03–0,04 | 0,04–0,05 | 0,06–0,07 | 0,06 | 0,07 | 0,06–0,07 |
-| R3 | 0,03 | 0,04 | 0,03 | **0,96** | 0,03 | 0,06 | 0,05–0,06 | 0,06 | 0,06 |
-| R4 | **0,97** | **0,95–0,96** | **0,97** | 0,03 | **0,97** | 0,05–0,06 | 0,06–0,07 | 0,05 | 0,06 |
-| R5 | 0,05 | **0,97** | **0,96** | 0,03 | 0,08 | 0,06–0,07 | 0,07 | 0,06 | 0,07 |
+| Wariant | d1_bear | h1_bear | m5_bear | m5_bull | m5_sell | h1_oversold | m5_prov_up | m5_prov_down |
+|---|---|---|---|---|---|---|---|---|
+| R1 | **0,82–0,87** | **0,98** | **0,91** | 0,14–0,17 | 0,03–0,04 | **0,97** | 0,06–0,07 | **0,93–0,94** |
+| R2 | **0,97** | **0,96** | **0,92–0,93** | 0,04 | **0,97** | 0,06 | 0,05–0,06 | 0,05–0,06 |
+| R4 | **0,97** | **0,92–0,93** | **0,97** | 0,03–0,04 | **0,98** | **0,97** | 0,05 | 0,05–0,06 |
+| R5 | 0,04–0,05 | **0,95–0,96** | **0,98** | 0,03 | **0,98** | 0,08–0,09 | 0,05 | 0,06 |
+| R7 | **0,97** | **0,96** | **0,93–0,94** | 0,04 | **0,96** | 0,06 | **0,76–0,78** | 0,06 |
+| R8 | **0,79–0,81** | **0,97** | 0,14–0,20 | **0,89–0,90** | 0,04 | **0,97** | 0,07 | **0,88–0,90** |
+| R9 | **0,97** | **0,95–0,96** | **0,91** | 0,04 | **0,97** | 0,05 | 0,06 | 0,05 |
 
-W R3 i R5 odpowiedzi `*_bullish` wynoszą 0,96–0,97 tam, gdzie trend jest wzrostowy.
+W R3 odpowiedzi `*_bullish` i `m5_buy_trigger` wynoszą 0,94–0,97.
 
 Wnioski:
 
-- 10 z 10 przebiegów dało oczekiwaną decyzję; odpowiedzi różnią się między
-  powtórzeniami najwyżej o 0,02.
-- Rozdzielenie pytań o cegły tymczasowe na H1 i M5 usunęło jedyną nierozstrzygniętą
-  odpowiedź z pierwszej wersji (łączne `provisional_down` 0,32–0,49 w R1): teraz H1 w górę
-  0,95, M5 w dół 0,96 – zgodnie z odczytem (3 877,90 > 3 872,58 na H1; 3 877,19 < 3 882,75 na M5).
-- R1: `d1_bearish` 0,76–0,78 leży blisko progu. Ostatnie zamknięte cegły D1 są zielone
-  (odbicie), więc trend wynika z ceny pod średnią i serii spadkowej sprzed odbicia.
-  Po zamknięciu sesji z czerwonymi cegłami odpowiedź powinna wzrosnąć.
+- 18 z 18 przebiegów dało oczekiwany status; odpowiedzi różnią się między powtórzeniami
+  najwyżej o 0,06.
+- **Liczby liczy kod, nie Jev.** W pierwszej wersji wyzwalacza Jev oceniał też warunek
+  „%R poniżej -30” i odwracał porównanie liczb ujemnych: %R -45 → „nie” (0,12–0,16),
+  %R -20 → „tak” (0,71–0,82). Podobnie wcześniej ułamki cegły bez podanej różnicy dawały
+  odpowiedzi na granicy (0,61–0,72). Dlatego progi %R, SAR, %B, ryzyko i RR liczy kod,
+  a różnicę cegieł tymczasowych trzeba podawać w `state` wprost.
+- R1 / R8: zdejmując blokadę H1 (której nie ma w profilu), oba rzeczywiste odczyty dają ARM
+  z ostrzeżeniem „H1 skrajnie wyprzedany” zamiast CZEKAJ.
