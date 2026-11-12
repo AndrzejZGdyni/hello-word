@@ -14,7 +14,8 @@ pytania o opis wykresów w `state`, decyzję wyznacza tabela decyzyjna w kodzie
 - **Kierunek z D1 i H1, wejście z M5.** Sprzedaż tylko przy trendzie spadkowym na D1
   i H1 oraz sygnale na M5; kupno symetrycznie. W pozostałych przypadkach CZEKAJ.
 - **Trend tylko z zamkniętych cegieł.** Tymczasowe (żółte) cegły zmieniają się do końca
-  interwału, dlatego służą wyłącznie jako ostrzeżenie (pytania `provisional_*`).
+  interwału, dlatego służą wyłącznie jako ostrzeżenie (pytania `h1_provisional_*`,
+  `m5_provisional_*`).
 - **Bez wejścia po dużym ruchu.** Sygnał sprzedaży przy skrajnym wyprzedaniu H1
   (albo kupna przy skrajnym wykupieniu) daje CZEKAJ.
 - **Jev ocenia opis, nie rynek.** Wynik 0,5 oznacza, że opis nie rozstrzyga pytania,
@@ -49,13 +50,14 @@ i zmień tylko `state`.
 | `m5_sell_trigger`, `m5_buy_trigger` | zamknięta cegła w kierunku wejścia oraz przecięcie Fishera albo odwrócenie SAR |
 | `h1_oversold_extreme` | %R ≤ -95 oraz Fisher < -4 albo %B < 0,10 |
 | `h1_overbought_extreme` | %R ≥ -5 oraz Fisher > 4 albo %B > 0,90 |
-| `provisional_up`, `provisional_down` | kierunek tymczasowych cegieł na H1 lub M5 |
+| `h1_provisional_up`, `h1_provisional_down` | kierunek tymczasowych cegieł na H1 |
+| `m5_provisional_up`, `m5_provisional_down` | kierunek tymczasowych cegieł na M5 |
 
 ## 4. Tabela decyzyjna
 
 Progi noul: **≥ 0,7 = tak**, **≤ 0,3 = nie**, pomiędzy = nierozstrzygnięte.
 Wiersze sprawdzane od góry; wygrywa pierwszy pasujący. Kupno działa symetrycznie
-do sprzedaży (`*_bullish`, `m5_buy_trigger`, `h1_overbought_extreme`, `provisional_down`).
+do sprzedaży (`*_bullish`, `m5_buy_trigger`, `h1_overbought_extreme`, `*_provisional_down`).
 
 | # | Warunek | Wynik |
 |---|---|---|
@@ -63,7 +65,7 @@ do sprzedaży (`*_bullish`, `m5_buy_trigger`, `h1_overbought_extreme`, `provisio
 | 2 | `d1_bearish` i `h1_bearish` = tak, `m5_sell_trigger` = nie | **CZEKAJ** – brak sygnału na M5 |
 | 3 | jak 2, ale `m5_sell_trigger` nierozstrzygnięte | **SPRAWDŹ** |
 | 4 | jak 2, `m5_sell_trigger` = tak, `h1_oversold_extreme` = tak | **CZEKAJ** – H1 skrajnie wyprzedany |
-| 5 | jak 4, ale `provisional_up` = tak | **CZEKAJ** – tymczasowe cegły przeciw |
+| 5 | jak 4, ale `h1_provisional_up` lub `m5_provisional_up` = tak | **CZEKAJ** – tymczasowe cegły przeciw |
 | 6 | jak 4, ale wyprzedanie lub cegły tymczasowe nierozstrzygnięte | **SPRAWDŹ** |
 | 7 | trend spadkowy D1+H1, sygnał M5, brak przeszkód | **SPRZEDAJ** |
 | 8 | wiersze 2–7 dla trendu wzrostowego | **CZEKAJ / SPRAWDŹ / KUP** |
@@ -87,7 +89,7 @@ Kody wyjścia: `0` CZEKAJ, `1` błąd, `2` SPRZEDAJ, `3` KUP, `4` SPRAWDŹ.
 `TYPESAFE_API_KEY` jest potrzebny tylko poza sesją Claude Code w chmurze.
 Pliki `renko_log.jsonl` i `renko_warianty.csv` są wykluczone z repozytorium.
 
-## 6. Test wariantów (12.11.2026, `jev-1.14.0`)
+## 6. Test wariantów (12.11.2026, `jev-1.14.0`, pytania o cegły tymczasowe osobno dla H1 i M5)
 
 | Wariant | Treść `state` | Oczekiwany | Otrzymany |
 |---|---|---|---|
@@ -99,21 +101,23 @@ Pliki `renko_log.jsonl` i `renko_warianty.csv` są wykluczone z repozytorium.
 
 Kluczowe odpowiedzi (zakres z dwóch przebiegów):
 
-| Wariant | d1_bear | d1_bull | h1_bear | h1_bull | m5_sell | m5_buy | h1_oversold | prov_up | prov_down |
+| Wariant | d1_bear | h1_bear | m5_sell | m5_buy | h1_oversold | h1_prov_up | h1_prov_down | m5_prov_up | m5_prov_down |
 |---|---|---|---|---|---|---|---|---|---|
-| R1 | **0,73–0,78** | 0,17–0,18 | **0,98** | 0,04 | 0,05–0,06 | **0,90** | **0,97** | **0,81–0,82** | 0,32–0,49 |
-| R2 | **0,97** | 0,04 | **0,96** | 0,05 | **0,96** | 0,03 | 0,05 | 0,07 | 0,05–0,06 |
-| R3 | 0,03 | **0,96–0,97** | 0,04 | **0,97** | 0,03 | **0,96** | 0,03 | 0,06 | 0,05 |
-| R4 | **0,97–0,98** | 0,03–0,04 | **0,95–0,96** | 0,06–0,07 | **0,97** | 0,03 | **0,97** | 0,05 | 0,05–0,06 |
-| R5 | 0,05–0,06 | **0,97** | **0,97** | 0,04 | **0,96** | 0,03–0,04 | 0,08–0,09 | 0,07–0,08 | 0,06–0,07 |
+| R1 | **0,76–0,78** | **0,98** | 0,05–0,06 | **0,90–0,91** | **0,97** | **0,95** | 0,07 | 0,07 | **0,96** |
+| R2 | **0,97** | **0,96** | **0,96** | 0,03–0,04 | 0,04–0,05 | 0,06–0,07 | 0,06 | 0,07 | 0,06–0,07 |
+| R3 | 0,03 | 0,04 | 0,03 | **0,96** | 0,03 | 0,06 | 0,05–0,06 | 0,06 | 0,06 |
+| R4 | **0,97** | **0,95–0,96** | **0,97** | 0,03 | **0,97** | 0,05–0,06 | 0,06–0,07 | 0,05 | 0,06 |
+| R5 | 0,05 | **0,97** | **0,96** | 0,03 | 0,08 | 0,06–0,07 | 0,07 | 0,06 | 0,07 |
+
+W R3 i R5 odpowiedzi `*_bullish` wynoszą 0,96–0,97 tam, gdzie trend jest wzrostowy.
 
 Wnioski:
 
 - 10 z 10 przebiegów dało oczekiwaną decyzję; odpowiedzi różnią się między
-  powtórzeniami najwyżej o 0,17 (`provisional_down` w R1), w pozostałych o ≤ 0,05.
-- R1: `d1_bearish` 0,73–0,78 leży blisko progu. Ostatnie zamknięte cegły D1 są zielone
+  powtórzeniami najwyżej o 0,02.
+- Rozdzielenie pytań o cegły tymczasowe na H1 i M5 usunęło jedyną nierozstrzygniętą
+  odpowiedź z pierwszej wersji (łączne `provisional_down` 0,32–0,49 w R1): teraz H1 w górę
+  0,95, M5 w dół 0,96 – zgodnie z odczytem (3 877,90 > 3 872,58 na H1; 3 877,19 < 3 882,75 na M5).
+- R1: `d1_bearish` 0,76–0,78 leży blisko progu. Ostatnie zamknięte cegły D1 są zielone
   (odbicie), więc trend wynika z ceny pod średnią i serii spadkowej sprzed odbicia.
   Po zamknięciu sesji z czerwonymi cegłami odpowiedź powinna wzrosnąć.
-- R1: `provisional_down` nierozstrzygnięte, bo tymczasowe cegły biegną różnie na H1
-  (w górę) i M5 (w dół). Nie zmienia to decyzji – brak sygnału na M5 ma pierwszeństwo.
-- Pierwszy kandydat do poprawy: osobne pytania o cegły tymczasowe dla H1 i M5.

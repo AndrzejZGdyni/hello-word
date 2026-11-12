@@ -66,20 +66,36 @@
         "false": "Williams %R na H1 jest poniżej -5 albo pozostałe oscylatory nie są skrajnie wysoko."
       }
     },
-    "provisional_up": {
+    "h1_provisional_up": {
       "type": "noul",
-      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na H1 lub M5 biegną w górę?",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale H1 biegną w górę?",
       "criteria": {
-        "true": "Opis podaje, że bieżące tymczasowe cegły na H1 lub M5 rosną, czyli bieżąca cegła jest wyżej niż ostatnia zamknięta.",
-        "false": "Tymczasowe cegły na H1 i M5 biegną w dół albo ich nie ma."
+        "true": "Bieżąca tymczasowa cegła na H1 jest wyżej niż ostatnia zamknięta cegła H1.",
+        "false": "Bieżąca tymczasowa cegła na H1 jest niżej niż ostatnia zamknięta albo na H1 nie ma tymczasowych cegieł."
       }
     },
-    "provisional_down": {
+    "h1_provisional_down": {
       "type": "noul",
-      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na H1 lub M5 biegną w dół?",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale H1 biegną w dół?",
       "criteria": {
-        "true": "Opis podaje, że bieżące tymczasowe cegły na H1 lub M5 spadają, czyli bieżąca cegła jest niżej niż ostatnia zamknięta.",
-        "false": "Tymczasowe cegły na H1 i M5 biegną w górę albo ich nie ma."
+        "true": "Bieżąca tymczasowa cegła na H1 jest niżej niż ostatnia zamknięta cegła H1.",
+        "false": "Bieżąca tymczasowa cegła na H1 jest wyżej niż ostatnia zamknięta albo na H1 nie ma tymczasowych cegieł."
+      }
+    },
+    "m5_provisional_up": {
+      "type": "noul",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale M5 biegną w górę?",
+      "criteria": {
+        "true": "Bieżąca tymczasowa cegła na M5 jest wyżej niż ostatnia zamknięta cegła M5.",
+        "false": "Bieżąca tymczasowa cegła na M5 jest niżej niż ostatnia zamknięta albo na M5 nie ma tymczasowych cegieł."
+      }
+    },
+    "m5_provisional_down": {
+      "type": "noul",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale M5 biegną w dół?",
+      "criteria": {
+        "true": "Bieżąca tymczasowa cegła na M5 jest niżej niż ostatnia zamknięta cegła M5.",
+        "false": "Bieżąca tymczasowa cegła na M5 jest wyżej niż ostatnia zamknięta albo na M5 nie ma tymczasowych cegieł."
       }
     }
   }

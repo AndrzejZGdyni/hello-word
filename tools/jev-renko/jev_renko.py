@@ -42,9 +42,10 @@ D1_BEAR, D1_BULL = "d1_bearish", "d1_bullish"
 H1_BEAR, H1_BULL = "h1_bearish", "h1_bullish"
 M5_SELL, M5_BUY = "m5_sell_trigger", "m5_buy_trigger"
 H1_OVERSOLD, H1_OVERBOUGHT = "h1_oversold_extreme", "h1_overbought_extreme"
-PROV_UP, PROV_DOWN = "provisional_up", "provisional_down"
+PROV_UP = ("h1_provisional_up", "m5_provisional_up")
+PROV_DOWN = ("h1_provisional_down", "m5_provisional_down")
 DECISION_KEYS = (D1_BEAR, D1_BULL, H1_BEAR, H1_BULL, M5_SELL, M5_BUY,
-                 H1_OVERSOLD, H1_OVERBOUGHT, PROV_UP, PROV_DOWN)
+                 H1_OVERSOLD, H1_OVERBOUGHT, *PROV_UP, *PROV_DOWN)
 TREND_KEYS = (D1_BEAR, D1_BULL, H1_BEAR, H1_BULL)
 
 EXIT_CODES = {"CZEKAJ": 0, "SPRZEDAJ": 2, "KUP": 3, "SPRAWDŹ": 4}
@@ -75,18 +76,21 @@ def validate(payload: dict) -> None:
         sys.exit("Błędy walidacji:\n  - " + "\n  - ".join(errors))
 
 
-def _entry(v: dict, trigger: str, extreme: str, against: str,
+def _entry(v: dict, trigger: str, extreme: str, against: tuple,
            action: str, trend: str, extreme_txt: str, against_txt: str):
-    """Wspólna gałąź dla zgodnego trendu D1+H1 (w dół lub w górę)."""
+    """Wspólna gałąź dla zgodnego trendu D1+H1 (w dół lub w górę).
+    against: pytania o cegły tymczasowe przeciw kierunkowi wejścia (H1, M5)."""
     if v[trigger] == "nie":
         return "CZEKAJ", f"trend {trend} na D1 i H1, brak sygnału wejścia na M5"
     if v[trigger] == UNSURE:
         return "SPRAWDŹ", "sygnał wejścia na M5 nierozstrzygnięty; uzupełnij opis M5"
     if v[extreme] == "tak":
         return "CZEKAJ", f"sygnał na M5, ale H1 {extreme_txt}; ryzyko wejścia po dużym ruchu"
-    if v[against] == "tak":
-        return "CZEKAJ", f"sygnał na M5, ale tymczasowe cegły biegną {against_txt}"
-    if UNSURE in (v[extreme], v[against]):
+    hit = [k.split("_")[0].upper() for k in against if v[k] == "tak"]
+    if hit:
+        return "CZEKAJ", (f"sygnał na M5, ale tymczasowe cegły {'+'.join(hit)} "
+                          f"biegną {against_txt}")
+    if UNSURE in (v[extreme], *(v[k] for k in against)):
         return "SPRAWDŹ", "oscylatory H1 lub cegły tymczasowe nierozstrzygnięte"
     return action, f"trend {trend} na D1 i H1, sygnał wejścia na M5"
 
