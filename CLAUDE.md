@@ -3,7 +3,8 @@
 ## Jev (TypeSafe System One) – jak uruchamiać
 
 - Narzędzia: `tools/jev-run/` (Cieśnina Ormuz), `tools/jev-zima/` (gotowość na zimę)
-  i `tools/jev-renko/` (KUP / SPRZEDAJ / CZEKAJ z wykresów Renko D1, H1, M5).
+  i `tools/jev-renko/` (CZEKAĆ / ARM / FIRE z wykresów Renko D1, H1, M5 według profilu
+  R11 2.4-trading-r3; `dane` liczy kod, `state` ocenia Jev; rejestr: `rejestr.py`).
   Opis pytań, tabel decyzyjnych i wyników: `tools/jev-run/WZOR_PYTANIA.md`,
   `tools/jev-zima/README.md`, `tools/jev-renko/README.md`.
 - **Klucz API:** w sesji Claude Code w chmurze, w środowisku z podłączonym TypeSafe, klucz
@@ -31,8 +32,9 @@
   `state`, żeby model przekroczył próg.
 - **Nie zmieniaj brzmienia pytań w szablonach** bez prośby użytkownika – zmienia to
   `questions_sha256` i zrywa porównywalność wyników w dziennikach.
-- Dzienniki (`*_log.jsonl`) i wyniki CSV nie trafiają do repozytorium (repozytorium jest
-  publiczne).
+- Dzienniki (`*_log.jsonl`), rejestry (`renko_rejestr.jsonl`, `renko_blokady.jsonl`) i wyniki
+  CSV nie trafiają do repozytorium (repozytorium jest publiczne). Pełnego profilu R11
+  (historia incydentów, wyniki w PLN) nie zapisuj w repozytorium – w kodzie są tylko progi.
 
 ## Styl odpowiedzi
 

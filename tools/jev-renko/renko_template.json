@@ -34,20 +34,36 @@
         "false": "Na H1 spełniony jest najwyżej jeden z tych warunków."
       }
     },
+    "m5_bearish": {
+      "type": "noul",
+      "instructions": "Czy według opisu trend na interwale M5 jest spadkowy?",
+      "criteria": {
+        "true": "Na M5 spełnione są co najmniej dwa z trzech warunków: przeważają zamknięte czerwone cegły (seria spadkowa), cena jest poniżej średniej kroczącej, Parabolic SAR jest nad ceną.",
+        "false": "Na M5 spełniony jest najwyżej jeden z tych warunków."
+      }
+    },
+    "m5_bullish": {
+      "type": "noul",
+      "instructions": "Czy według opisu trend na interwale M5 jest wzrostowy?",
+      "criteria": {
+        "true": "Na M5 spełnione są co najmniej dwa z trzech warunków: przeważają zamknięte zielone cegły (seria wzrostowa), cena jest powyżej średniej kroczącej, Parabolic SAR jest pod ceną.",
+        "false": "Na M5 spełniony jest najwyżej jeden z tych warunków."
+      }
+    },
     "m5_sell_trigger": {
       "type": "noul",
-      "instructions": "Czy według opisu na interwale M5 pojawił się sygnał wejścia w sprzedaż?",
+      "instructions": "Czy według opisu ostatnia zamknięta cegła na interwale M5 jest nową czerwoną cegłą (blok SELL)?",
       "criteria": {
-        "true": "Na M5 ostatnia zamknięta cegła jest czerwona i dodatkowo Fisher przeciął linię sygnału w dół albo Parabolic SAR przeskoczył nad cenę.",
-        "false": "Na M5 ostatnie zamknięte cegły są zielone (odbicie trwa) albo Fisher i SAR nie dają sygnału spadkowego."
+        "true": "Ostatnia zamknięta cegła M5 jest czerwona: pierwsza czerwona po zielonych albo kolejna czerwona w serii spadkowej.",
+        "false": "Ostatnia zamknięta cegła M5 jest zielona."
       }
     },
     "m5_buy_trigger": {
       "type": "noul",
-      "instructions": "Czy według opisu na interwale M5 pojawił się sygnał wejścia w kupno?",
+      "instructions": "Czy według opisu ostatnia zamknięta cegła na interwale M5 jest nową zieloną cegłą (blok BUY)?",
       "criteria": {
-        "true": "Na M5 ostatnia zamknięta cegła jest zielona i dodatkowo Fisher przeciął linię sygnału w górę albo Parabolic SAR przeskoczył pod cenę.",
-        "false": "Na M5 ostatnie zamknięte cegły są czerwone (korekta trwa) albo Fisher i SAR nie dają sygnału wzrostowego."
+        "true": "Ostatnia zamknięta cegła M5 jest zielona: pierwsza zielona po czerwonych albo kolejna zielona w serii wzrostowej.",
+        "false": "Ostatnia zamknięta cegła M5 jest czerwona."
       }
     },
     "h1_oversold_extreme": {
@@ -98,5 +114,24 @@
         "false": "Bieżąca tymczasowa cegła na M5 jest wyżej niż ostatnia zamknięta, niżej o mniej niż połowę wielkości cegły albo na M5 nie ma tymczasowych cegieł."
       }
     }
+  },
+  "dane": {
+    "instrument": "GOLD",
+    "czas": "RRRR-MM-DD GG:MM",
+    "m5_pctB": null,
+    "m5_pctR": null,
+    "m5_sar": null,
+    "m5_cena": null,
+    "spread": null,
+    "wartosc_punktu": null,
+    "kapital": null,
+    "ryzyko_proc": 1.3,
+    "entry": null,
+    "sl": null,
+    "tp": null,
+    "lot_min": 0.01,
+    "lot_krok": 0.01,
+    "makro": null,
+    "swiadomie_poza_oknem": false
   }
 }
