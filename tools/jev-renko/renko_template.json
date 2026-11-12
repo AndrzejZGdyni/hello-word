@@ -1,0 +1,102 @@
+{
+  "model": "jev-latest",
+  "state": "Stan na DD.MM.RRRR GG:MM. Instrument: <np. GOLD>. <odczyt D1, H1 i M5 według README.md, sekcja 2>",
+  "questions": {
+    "d1_bearish": {
+      "type": "noul",
+      "instructions": "Czy według opisu trend na interwale D1 jest spadkowy?",
+      "criteria": {
+        "true": "Na D1 spełnione są co najmniej dwa z trzech warunków: przeważają zamknięte czerwone cegły (seria spadkowa), cena jest poniżej średniej kroczącej, Parabolic SAR jest nad ceną.",
+        "false": "Na D1 spełniony jest najwyżej jeden z tych warunków."
+      }
+    },
+    "d1_bullish": {
+      "type": "noul",
+      "instructions": "Czy według opisu trend na interwale D1 jest wzrostowy?",
+      "criteria": {
+        "true": "Na D1 spełnione są co najmniej dwa z trzech warunków: przeważają zamknięte zielone cegły (seria wzrostowa), cena jest powyżej średniej kroczącej, Parabolic SAR jest pod ceną.",
+        "false": "Na D1 spełniony jest najwyżej jeden z tych warunków."
+      }
+    },
+    "h1_bearish": {
+      "type": "noul",
+      "instructions": "Czy według opisu trend na interwale H1 jest spadkowy?",
+      "criteria": {
+        "true": "Na H1 spełnione są co najmniej dwa z trzech warunków: przeważają zamknięte czerwone cegły (seria spadkowa), cena jest poniżej średniej kroczącej, Parabolic SAR jest nad ceną.",
+        "false": "Na H1 spełniony jest najwyżej jeden z tych warunków."
+      }
+    },
+    "h1_bullish": {
+      "type": "noul",
+      "instructions": "Czy według opisu trend na interwale H1 jest wzrostowy?",
+      "criteria": {
+        "true": "Na H1 spełnione są co najmniej dwa z trzech warunków: przeważają zamknięte zielone cegły (seria wzrostowa), cena jest powyżej średniej kroczącej, Parabolic SAR jest pod ceną.",
+        "false": "Na H1 spełniony jest najwyżej jeden z tych warunków."
+      }
+    },
+    "m5_sell_trigger": {
+      "type": "noul",
+      "instructions": "Czy według opisu na interwale M5 pojawił się sygnał wejścia w sprzedaż?",
+      "criteria": {
+        "true": "Na M5 ostatnia zamknięta cegła jest czerwona i dodatkowo Fisher przeciął linię sygnału w dół albo Parabolic SAR przeskoczył nad cenę.",
+        "false": "Na M5 ostatnie zamknięte cegły są zielone (odbicie trwa) albo Fisher i SAR nie dają sygnału spadkowego."
+      }
+    },
+    "m5_buy_trigger": {
+      "type": "noul",
+      "instructions": "Czy według opisu na interwale M5 pojawił się sygnał wejścia w kupno?",
+      "criteria": {
+        "true": "Na M5 ostatnia zamknięta cegła jest zielona i dodatkowo Fisher przeciął linię sygnału w górę albo Parabolic SAR przeskoczył pod cenę.",
+        "false": "Na M5 ostatnie zamknięte cegły są czerwone (korekta trwa) albo Fisher i SAR nie dają sygnału wzrostowego."
+      }
+    },
+    "h1_oversold_extreme": {
+      "type": "noul",
+      "instructions": "Czy według opisu oscylatory na interwale H1 wskazują skrajne wyprzedanie?",
+      "criteria": {
+        "true": "Na H1 Williams %R jest na poziomie -95 lub niżej i dodatkowo Fisher jest poniżej -4 albo BB %B poniżej 0,10.",
+        "false": "Williams %R na H1 jest powyżej -95 albo pozostałe oscylatory nie są skrajnie nisko."
+      }
+    },
+    "h1_overbought_extreme": {
+      "type": "noul",
+      "instructions": "Czy według opisu oscylatory na interwale H1 wskazują skrajne wykupienie?",
+      "criteria": {
+        "true": "Na H1 Williams %R jest na poziomie -5 lub wyżej i dodatkowo Fisher jest powyżej 4 albo BB %B powyżej 0,90.",
+        "false": "Williams %R na H1 jest poniżej -5 albo pozostałe oscylatory nie są skrajnie wysoko."
+      }
+    },
+    "h1_provisional_up": {
+      "type": "noul",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale H1 biegną w górę?",
+      "criteria": {
+        "true": "Bieżąca tymczasowa cegła na H1 jest wyżej niż ostatnia zamknięta cegła H1.",
+        "false": "Bieżąca tymczasowa cegła na H1 jest niżej niż ostatnia zamknięta albo na H1 nie ma tymczasowych cegieł."
+      }
+    },
+    "h1_provisional_down": {
+      "type": "noul",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale H1 biegną w dół?",
+      "criteria": {
+        "true": "Bieżąca tymczasowa cegła na H1 jest niżej niż ostatnia zamknięta cegła H1.",
+        "false": "Bieżąca tymczasowa cegła na H1 jest wyżej niż ostatnia zamknięta albo na H1 nie ma tymczasowych cegieł."
+      }
+    },
+    "m5_provisional_up": {
+      "type": "noul",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale M5 biegną w górę?",
+      "criteria": {
+        "true": "Bieżąca tymczasowa cegła na M5 jest wyżej niż ostatnia zamknięta cegła M5.",
+        "false": "Bieżąca tymczasowa cegła na M5 jest niżej niż ostatnia zamknięta albo na M5 nie ma tymczasowych cegieł."
+      }
+    },
+    "m5_provisional_down": {
+      "type": "noul",
+      "instructions": "Czy według opisu tymczasowe (żółte, niezamknięte) cegły na interwale M5 biegną w dół?",
+      "criteria": {
+        "true": "Bieżąca tymczasowa cegła na M5 jest niżej niż ostatnia zamknięta cegła M5.",
+        "false": "Bieżąca tymczasowa cegła na M5 jest wyżej niż ostatnia zamknięta albo na M5 nie ma tymczasowych cegieł."
+      }
+    }
+  }
+}
