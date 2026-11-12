@@ -3,7 +3,8 @@
 
 Uruchamiać w katalogu tools/jev-renko; klucz jak w jev_renko.py. Kolumna 'oczekiwany'
 to wynik, jakiego wymaga tabela decyzyjna dla danego opisu; niezgodność wypisywana
-jest jako NIEZGODNOŚĆ. R1 to rzeczywisty odczyt z 12.11.2026, R2–R5 są syntetyczne.
+jest jako NIEZGODNOŚĆ. R1 to rzeczywisty odczyt z 12.11.2026, R2–R7 są syntetyczne
+(R6, R7: próg pół cegły w pytaniach o cegły tymczasowe).
 """
 import csv
 import json
@@ -16,9 +17,9 @@ OUT = "renko_warianty.csv"
 
 VARIANTS = {
     "R1": ("CZEKAJ", "Stan na 12.11.2026 19:05. Instrument: GOLD, wykresy Renko z wielkością cegły ATR(14). "
-           "D1 (cegła ok. 49 pkt): po spadku od szczytu z września ok. 4 500 kilka zamkniętych zielonych cegieł odbicia; ostatnia zamknięta cegła 4 030,56 (zielona). W bieżącej sesji dwie tymczasowe żółte cegły w dół, bieżąca cegła 3 874,50. Średnia krocząca 4 167,40. Parabolic SAR 3 895,05. MACD -82,43, sygnał -77,73, histogram -4,69. AO -202,85, słupki zielone. Williams %R -66,67. Fisher -0,23, sygnał -0,88. BB %B 0,31. "
-           "H1 (cegła ok. 15 pkt): od szczytu 10.11 ok. 4 100 nieprzerwana seria zamkniętych czerwonych cegieł; ostatnia zamknięta cegła 3 872,58, bieżąca tymczasowa cegła 3 877,90. Średnia krocząca 4 003,92. Parabolic SAR 3 962,33. MACD poniżej sygnału -24,25, histogram -17,07 i spada. AO -125,82, słupki czerwone. Williams %R -100. Fisher -7,23, sygnał -6,86, oba spadają. BB %B 0,06. "
-           "M5 (cegła 8,35 pkt): seria czerwonych cegieł od 10.11, na końcu dwie zamknięte zielone cegły odbicia; ostatnia zamknięta cegła 3 882,75 (zielona), bieżąca tymczasowa cegła 3 877,19. Średnia krocząca 3 918,66. Parabolic SAR 3 883,60. MACD: histogram -0,47, sygnał -37,09, linie się zbiegają. AO -90,43, słupki zielone. Williams %R -72,73 i rośnie. Fisher -3,51 przeciął w górę sygnał -5,21. BB %B 0,27 i rośnie."),
+           "D1 (cegła ok. 49 pkt): po spadku od szczytu z września ok. 4 500 kilka zamkniętych zielonych cegieł odbicia, a po nich jedna zamknięta czerwona; ostatnia zamknięta cegła 4 030,56 (czerwona). W bieżącej sesji dwie tymczasowe żółte cegły w dół, bieżąca cegła 3 874,50. Średnia krocząca 4 167,40. Parabolic SAR 3 895,05. MACD -82,43, sygnał -77,73, histogram -4,69. AO -202,85, słupki zielone. Williams %R -66,67. Fisher -0,23, sygnał -0,88. BB %B 0,31. "
+           "H1 (cegła ok. 15 pkt): od szczytu 10.11 ok. 4 100 nieprzerwana seria zamkniętych czerwonych cegieł; ostatnia zamknięta cegła 3 872,58, bieżąca tymczasowa cegła 3 877,90 (różnica +5,32 pkt, czyli 0,35 cegły). Średnia krocząca 4 003,92. Parabolic SAR 3 962,33. MACD poniżej sygnału -24,25, histogram -17,07 i spada. AO -125,82, słupki czerwone. Williams %R -100. Fisher -7,23, sygnał -6,86, oba spadają. BB %B 0,06. "
+           "M5 (cegła 8,35 pkt): seria czerwonych cegieł od 10.11, na końcu dwie zamknięte zielone cegły odbicia; ostatnia zamknięta cegła 3 882,75 (zielona), bieżąca tymczasowa cegła 3 877,19 (różnica -5,56 pkt, czyli 0,67 cegły). Średnia krocząca 3 918,66. Parabolic SAR 3 883,60. MACD: histogram -0,47, sygnał -37,09, linie się zbiegają. AO -90,43, słupki zielone. Williams %R -72,73 i rośnie. Fisher -3,51 przeciął w górę sygnał -5,21. BB %B 0,27 i rośnie."),
     "R2": ("SPRZEDAJ", "Stan na 20.11.2026 10:00. Instrument: GOLD, wykresy Renko ATR(14). "
            "D1: seria zamkniętych czerwonych cegieł, ostatnia zamknięta 3 800. Średnia krocząca 3 950. Parabolic SAR 3 880. Williams %R -75, Fisher -1,8, BB %B 0,25. "
            "H1: seria zamkniętych czerwonych cegieł z krótką korektą; ostatnia zamknięta 3 805. Średnia krocząca 3 830. Parabolic SAR 3 845. Williams %R -70. Fisher -1,5. BB %B 0,30. Brak tymczasowych cegieł. "
@@ -35,6 +36,14 @@ VARIANTS = {
            "D1: seria zamkniętych zielonych cegieł, ostatnia zamknięta 4 100. Średnia krocząca 3 980. Parabolic SAR 4 010. "
            "H1: seria zamkniętych czerwonych cegieł; ostatnia zamknięta 4 060. Średnia krocząca 4 090. Parabolic SAR 4 110. Williams %R -80. Fisher -2,0. BB %B 0,15. Brak tymczasowych cegieł. "
            "M5: nowa zamknięta czerwona cegła 4 060; Fisher przeciął sygnał w dół; Parabolic SAR nad ceną. Brak tymczasowych cegieł."),
+    "R6": ("SPRZEDAJ", "Stan na 20.11.2026 10:00. Instrument: GOLD, wykresy Renko ATR(14). "
+           "D1: seria zamkniętych czerwonych cegieł, ostatnia zamknięta 3 800. Średnia krocząca 3 950. Parabolic SAR 3 880. "
+           "H1 (cegła 12 pkt): seria zamkniętych czerwonych cegieł z krótką korektą; ostatnia zamknięta cegła 3 805,00, bieżąca tymczasowa cegła 3 805,40. Średnia krocząca 3 830. Parabolic SAR 3 845. Williams %R -70. Fisher -1,5. BB %B 0,30. "
+           "M5 (cegła 4 pkt): po odbiciu do średniej 3 812 pojawiła się nowa zamknięta czerwona cegła 3 805; Fisher przeciął sygnał w dół; Parabolic SAR przeskoczył nad cenę na 3 815. Brak tymczasowych cegieł."),
+    "R7": ("CZEKAJ", "Stan na 20.11.2026 10:00. Instrument: GOLD, wykresy Renko ATR(14). "
+           "D1: seria zamkniętych czerwonych cegieł, ostatnia zamknięta 3 800. Średnia krocząca 3 950. Parabolic SAR 3 880. "
+           "H1 (cegła 12 pkt): seria zamkniętych czerwonych cegieł z krótką korektą; ostatnia zamknięta 3 805. Średnia krocząca 3 830. Parabolic SAR 3 845. Williams %R -70. Fisher -1,5. BB %B 0,30. Brak tymczasowych cegieł. "
+           "M5 (cegła 4 pkt): po odbiciu do średniej 3 812 pojawiła się nowa zamknięta czerwona cegła 3 805,00; Fisher przeciął sygnał w dół; Parabolic SAR przeskoczył nad cenę na 3 815. Bieżąca tymczasowa cegła 3 808,50."),
 }
 
 
