@@ -30,3 +30,9 @@
   `questions_sha256` i zrywa porównywalność wyników w dziennikach.
 - Dzienniki (`*_log.jsonl`) i wyniki CSV nie trafiają do repozytorium (repozytorium jest
   publiczne).
+
+## Styl odpowiedzi
+
+- Każdą odpowiedź kończ sekcją **Sugestie:** z ponumerowaną listą (2–4 pozycje)
+  następnych kroków, tak aby użytkownik mógł odpowiedzieć samym numerem (np. „1”).
+  Odpowiedź samym numerem traktuj jako wybór odpowiedniej sugestii z poprzedniej wiadomości.
